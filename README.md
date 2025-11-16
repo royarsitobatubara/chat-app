@@ -1,1 +1,60 @@
 # CHAT APP
+
+make mini chat application
+
+## 🚀 Tech Stack
+
+### 📱 Frontend
+
+- Flutter
+- Provider
+- socket.io client
+- http
+- Sqflite
+- Shared preferences
+- path
+
+### 📡 Backend
+
+- Express js
+- Socket.io
+- Prisma ORM
+- MongoDB
+- Env
+- Cors
+
+## 📌 Features
+
+- Register & Login
+- Realtime chat with Socket.IO
+- Send text messages
+- Send image messages (upload)
+- Delete message
+- View chat list / recent conversations
+- Profile update (photo + name)
+- Online / offline indicator
+- Local cache of messages with sqflite
+
+## 📂 Folder Structure
+
+```pgsql
+    chat-app/
+    ├── backend/   # Express JS
+    └── frontend/  # Flutter project
+```
+
+## 🛠️ How to install
+
+```bash
+    # clone repo
+    git clone https://github.com/royarsitobatubara/chat-app.git
+    cd chat-app
+
+    # frontend
+    cd frontend
+    flutter pub get
+
+    # backend (in separate terminal)
+    cd ../backend
+    npm install
+```
