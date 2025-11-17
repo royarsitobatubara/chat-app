@@ -4,49 +4,34 @@ import jwt from "jsonwebtoken"
 import dotenv from "dotenv";
 import UserModel from "../models/user.model.js";
 import response from "../helpers/response.helper.js";
+import generateUUID from "../helpers/generateuuid.helper.js";
 
 dotenv.config();
 const userController = express.Router();
-const endpoint = "/api/user";
 
-userController.get(`${endpoint}/signIn`, async(req, res) => {
+userController.post("/signin", async (req, res) => {
+     console.log("req.body:", req.body);
     const {email, password} = req.body;
     if(!email || !password){
-        return response.failed({
-            res,
-            status: 400,
-            message: "Email dan password is required",
-            error: null
-        });
+        return response.failed({res, status: 400, message: "Required email and password"});
     }
     try {
-        // Check email
-        const user = await UserModel.getUserByEmail({email});
-        if (!user) return response.failed({
-            res,
-            status: 404,
-            message: "Email is not found",
-            error: null
-        });
-        // Check password
-        const check = await bcrypt.compare(password, user.password);
-        if (!check) return response.failed({
-            res,
-            status: 400,
-            message: "Password is wrong",
-            error: null
-        });
+        const user = await UserModel.getUserByEmail({email: email});
+        if(!user) return response.failed({res, status: 404, message: "Email and password is wrong"});
+
+        const passCheck = await bcrypt.compare(password, user.password);
+        if(!passCheck) return response.failed({res, status: 400, message: "Email and password is wrong"});
 
         const token = jwt.sign(
             {id: user.id, email: user.email},
             process.env.JWT_SECRET,
-            {expiresIn: "365d"}
-        );
+            {expiresIn: '365d'}
+        )
 
         return response.success({
             res,
             status: 200,
-            message: "Sign in is success",
+            message: "Login is success",
             data: {
                 id: user.id,
                 username: user.username,
@@ -55,17 +40,43 @@ userController.get(`${endpoint}/signIn`, async(req, res) => {
                 token: token
             }
         });
-
     } catch (error) {
-        return;
+        return response.failed({res, status: 500, message: "Server have something wrong", error: error.message});
     }
 });
 
-userController.post(`${endpoint}/signUp`, (req, res) => {
+userController.post(`/signup`, async (req, res) => {
+    const {username, email, password} = req.body;
+    if(!username || !email || !password){
+        return response.failed({res, status: 400, message: "Required username, email and password"});
+    }
     try {
-        
+        const emailCheck = await UserModel.getUserByEmail({email: email});
+        if(emailCheck != null){
+            return response.failed({res, status: 400, message: "Email is already exist"});
+        }
+        const passwordHash = await bcrypt.hash(password, 10);
+        const data = await UserModel.create({
+            id: generateUUID(),
+            username: username,
+            email: email,
+            password: passwordHash
+        });
+        if(!data){
+            return response.failed({res, status: 400, message: "Failed to signup"});
+        }
+        return response.success({
+            res,
+            status: 201,
+            message: "Sign Up is success",
+            data: {
+                id: data.id,
+                username: data.username,
+                email: data.email
+            }
+        });
     } catch (error) {
-        
+        return response.failed({res, status: 500, message: "Server have something wrong", error: error.message});
     }
 });
 
