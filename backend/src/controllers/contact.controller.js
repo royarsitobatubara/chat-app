@@ -1,8 +1,8 @@
-import express from "express";
+import {Router} from "express";
 import ContactModel from "../models/contact.model.js";
-import response from "../helpers/response.helper.js";
+import response from "../helpers/response.js";
+import logger from "../helpers/logger.js";
 
-const contactController = express.Router();
-const endpoint = "/api/contact";
+const contactController = Router();
 
 export default contactController;

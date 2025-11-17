@@ -3,8 +3,9 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken"
 import dotenv from "dotenv";
 import UserModel from "../models/user.model.js";
-import response from "../helpers/response.helper.js";
-import generateUUID from "../helpers/generateuuid.helper.js";
+import response from "../helpers/response.js";
+import generateUUID from "../helpers/generateuuid.js";
+import logger from "../helpers/logger.js";
 
 dotenv.config();
 const userController = express.Router();
@@ -26,8 +27,9 @@ userController.post("/signin", async (req, res) => {
             {id: user.id, email: user.email},
             process.env.JWT_SECRET,
             {expiresIn: '365d'}
-        )
+        );
 
+        logger.info(`[INFO] ${user.email} is login`);
         return response.success({
             res,
             status: 200,
@@ -41,6 +43,7 @@ userController.post("/signin", async (req, res) => {
             }
         });
     } catch (error) {
+        logger.error(`[ERROR] userController /signin ${error}`);
         return response.failed({res, status: 500, message: "Server have something wrong", error: error.message});
     }
 });
@@ -53,6 +56,7 @@ userController.post(`/signup`, async (req, res) => {
     try {
         const emailCheck = await UserModel.getUserByEmail({email: email});
         if(emailCheck != null){
+            logger.warn(`[WARN] email is exist`);
             return response.failed({res, status: 400, message: "Email is already exist"});
         }
         const passwordHash = await bcrypt.hash(password, 10);
@@ -65,6 +69,7 @@ userController.post(`/signup`, async (req, res) => {
         if(!data){
             return response.failed({res, status: 400, message: "Failed to signup"});
         }
+        logger.info(`[INFO] ${data.email} is login`);
         return response.success({
             res,
             status: 201,
@@ -76,6 +81,7 @@ userController.post(`/signup`, async (req, res) => {
             }
         });
     } catch (error) {
+        logger.error(`[ERROR] userController /signup ${error}`);
         return response.failed({res, status: 500, message: "Server have something wrong", error: error.message});
     }
 });

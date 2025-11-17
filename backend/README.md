@@ -19,6 +19,11 @@ Response Body (failed)
 }
 ```
 ----
-# 📌 Featurs
+## 📌 Featurs
 - Sign in and Sign Up
+---
+
+## 📫 API
+- Websocket api
+- Rest api
 ---
