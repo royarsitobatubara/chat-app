@@ -1,47 +1,31 @@
-import logger from "../helpers/logger.js";
 import messageSchema from "../lib/schema/message-schema.js";
+import logger from "../helpers/logger.js";
 
-class MessageModel {
-
-  static async insert({ data }) {
-    try {
-      const message = await messageSchema.create({
-        id: data.id,
-        from: data.from,
-        to: data.to,
-        type: data.type,
-        isRead: data.isRead,
-        time: data.time
-      });
-      return message;
-    } catch (error) {
-      logger.error(`MessageModel -> insert: ${error.message}`);
-      throw error;
-    }
+async function insert({ message, from, to, type, isRead, time }) {
+  try {
+    return await messageSchema.create({ message, from, to, type, isRead, time });
+  } catch (err) {
+    logger.error(`MessageModel -> insert: ${err.message}`);
+    throw err;
   }
-
-  static async delete({ data }) {
-    try {
-      return await messageSchema.deleteMany({ to: data.to });
-    } catch (error) {
-      logger.error(`MessageModel -> delete: ${error.message}`);
-      throw error;
-    }
-  }
-
-  static async get({ data }) {
-    try {
-      const messages = await messageSchema.find({
-        to: data.to
-      }).lean();
-
-      return messages || [];
-    } catch (error) {
-      logger.error(`MessageModel -> get: ${error.message}`);
-      throw error;
-    }
-  }
-
 }
 
-export default MessageModel;
+async function deleteByReceiver({ to }) {
+  try {
+    return await messageSchema.deleteMany({ to });
+  } catch (err) {
+    logger.error(`MessageModel -> deleteByReceiver: ${err.message}`);
+    throw err;
+  }
+}
+
+async function getByReceiver({ to }) {
+  try {
+    return await messageSchema.find({ to }).lean();
+  } catch (err) {
+    logger.error(`MessageModel -> getByReceiver: ${err.message}`);
+    throw err;
+  }
+}
+
+export default { insert, deleteByReceiver, getByReceiver };

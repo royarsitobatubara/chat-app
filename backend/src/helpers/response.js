@@ -22,7 +22,7 @@ class ResponseHelper {
      * @param {String} message
      * @param {String|Object} error
      */
-    static failed({ res, status = 500, message = "", error = "" }) {
+    static failed({ res, status = 500, message = "internal server error", error = null }) {
         return res.status(status).json({
             success: false,
             message,

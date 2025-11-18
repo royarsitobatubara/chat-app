@@ -1,42 +1,50 @@
 import logger from "../helpers/logger.js";
 import contactSchema from "../lib/schema/contact-schema.js";
 
-class ContactModel {
-
-    static async insert({ id, email_from, email_to }){
-        try {
-            const result = await contactSchema.insertOne({ id: id, email_from: email_from, email_to: email_to});
-            if(!result){
-                logger.warn(`ContactModel -> insert: Failed to save contact`);
-                return; 
-            }
-            return result;
-        } catch (error) {
-            logger.error(`ContactModel -> insert: ${error.message}`);
-            throw error;
-        }
-    }
-
-    static async getContactByEmail({ email }){
-        try {
-            const result = await contactSchema.find({ email_to: email });
-            return result;
-        } catch (error) {
-            logger.error(`ContactModel -> getContactByEmail: ${error.message}`);
-            throw error;
-        }
-    }
-
-    static async getAllContactByEmail({ email }){
-        try {
-            const result = await contactSchema.find({ email_from: email});
-            return result;
-        } catch (error) {
-            logger.error(`ContactModel -> getAllContactByEmail: ${error.message}`);
-            throw error;
-        }
-    }
-
+// MEMASUKAN CONTACT KE DATABASE
+async function insert({ id, email_from, email_to }) {
+  try {
+    const doc = await contactSchema.create({ id, email_from, email_to });
+    return doc;
+  } catch (err) {
+    logger.error(`ContactModel -> insert: ${err.message}`);
+    throw err;
+  }
 }
 
-export default ContactModel;
+// MENGAMBIL CONTACT DARI DATABASE BERDASARKAN EMAIL YANG DI TUJU
+async function getByReceiverEmail({ email }) {
+  try {
+    return await contactSchema.findOne({ email_to: email });
+  } catch (err) {
+    logger.error(`ContactModel -> getByReceiverEmail: ${err.message}`);
+    throw err;
+  }
+}
+
+// MENGAMBIL CONTACT DARI DATABASE BERDASARKAN EMAIL KITA
+async function getBySenderEmail({ email }) {
+  try {
+    return await contactSchema.find({ email_from: email });
+  } catch (err) {
+    logger.error(`ContactModel -> getBySenderEmail: ${err.message}`);
+    throw err;
+  }
+}
+
+// MENGAMBIL CONTACT DARI DATABASE BERDASARKAN EMAIL KITA DAN YANG DI TUJU
+async function getBySenderAndReceiverEmail({ email_from, email_to }) {
+  try {
+    return await contactSchema.find({ email_from: email_from, email_to: email_to });
+  } catch (err) {
+    logger.error(`ContactModel -> getBySenderEmail: ${err.message}`);
+    throw err;
+  }
+}
+
+export default {
+  insert,
+  getByReceiverEmail,
+  getBySenderEmail,
+  getBySenderAndReceiverEmail
+};

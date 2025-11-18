@@ -1,35 +1,35 @@
 import userSchema from "../lib/schema/user-schema.js";
+import logger from "../helpers/logger.js";
 
-class UserModel {
-    static async create({ id, username, email, password }) {
-        try {
-            const newUser = await userSchema.create({ id, username, email, password });
-            return newUser;
-        } catch (error) {
-            console.error("Gagal membuat user:", error);
-            throw error;
-        }
-    }
-
-    static async getUserByEmail({ email }) {
-        try {
-            const user = await userSchema.findOne({ email });
-            return user;
-        } catch (error) {
-            console.error("Gagal mengambil user:", error);
-            throw error;
-        }
-    }
-
-    static async getUserByEmailAndPassword({ email, password }) {
-        try {
-            const user = await userSchema.findOne({ email, password });
-            return user;
-        } catch (error) {
-            console.error("Gagal login:", error);
-            throw error;
-        }
-    }
+async function createUser({ id, username, email, password }) {
+  try {
+    return await userSchema.create({ id, username, email, password });
+  } catch (error) {
+    logger.error(`UserModel -> createUser: ${error.message}`);
+    throw error;
+  }
 }
 
-export default UserModel;
+async function findByEmail(email) {
+  try {
+    return await userSchema.findOne({ email });
+  } catch (error) {
+    logger.error(`UserModel -> findByEmail: ${error.message}`);
+    throw error;
+  }
+}
+
+async function findByEmailAndPassword(email, password) {
+  try {
+    return await userSchema.findOne({ email, password });
+  } catch (error) {
+    logger.error(`UserModel -> findByEmailAndPassword: ${error.message}`);
+    throw error;
+  }
+}
+
+export default {
+  createUser,
+  findByEmail,
+  findByEmailAndPassword
+};

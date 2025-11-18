@@ -1,90 +1,74 @@
-import express from "express";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken"
-import dotenv from "dotenv";
-import UserModel from "../models/user.model.js";
+import { Router } from "express";
+import userService from "../services/user.service.js";
 import response from "../helpers/response.js";
-import generateUUID from "../helpers/generateuuid.js";
 import logger from "../helpers/logger.js";
 
-dotenv.config();
-const userController = express.Router();
+const userController = Router();
 
 userController.post("/signin", async (req, res) => {
-     console.log("req.body:", req.body);
-    const {email, password} = req.body;
-    if(!email || !password){
-        return response.failed({res, status: 400, message: "Required email and password"});
-    }
-    try {
-        const user = await UserModel.getUserByEmail({email: email});
-        if(!user) return response.failed({res, status: 404, message: "Email and password is wrong"});
+  const { email, password } = req.body;
 
-        const passCheck = await bcrypt.compare(password, user.password);
-        if(!passCheck) return response.failed({res, status: 400, message: "Password is wrong"});
+  if (!email || !password) {
+    return response.failed({
+      res,
+      status: 400,
+      message: "Required email and password"
+    });
+  }
 
-        const token = jwt.sign(
-            {id: user.id, email: user.email},
-            process.env.JWT_SECRET,
-            {expiresIn: '365d'}
-        );
+  try {
+    const data = await userService.signin({ email, password });
 
-        logger.info(`${user.email} is login`);
-        return response.success({
-            res,
-            status: 200,
-            message: "Login is success",
-            data: {
-                id: user.id,
-                username: user.username,
-                email: user.email,
-                photo: user.photo,
-                token: token
-            }
-        });
-    } catch (error) {
-        logger.error(`userController /api/user/signin ${error}`);
-        return response.failed({res, status: 500, message: "Server have something wrong", error: error.message});
-    }
+    return response.success({
+      res,
+      status: 200,
+      message: "Login is success",
+      data
+    });
+  } catch (err) {
+    logger.error(`POST /signin: ${err.message}`);
+
+    return response.failed({
+      res,
+      status: err.status || 500,
+      message: err.message || "internal server error"
+    });
+  }
 });
 
-userController.post(`/signup`, async (req, res) => {
-    const {username, email, password} = req.body;
-    if(!username || !email || !password){
-        return response.failed({res, status: 400, message: "Required username, email and password"});
-    }
-    try {
-        const emailCheck = await UserModel.getUserByEmail({email: email});
-        if(emailCheck){
-            logger.warn(`email is exist`);
-            return response.failed({res, status: 400, message: "Email is already exist"});
-        }
-        const passwordHash = await bcrypt.hash(password, 10);
-        const data = await UserModel.create({
-            id: generateUUID(),
-            username: username,
-            email: email,
-            password: passwordHash
-        });
-        if(!data){
-            return response.failed({res, status: 400, message: "Failed to signup"});
-        }
-        logger.info(`${data.email} is registered`);
-        return response.success({
-            res,
-            status: 201,
-            message: "Sign Up is success",
-            data: {
-                id: data.id,
-                username: data.username,
-                email: data.email
-            }
-        });
-    } catch (error) {
-        logger.error(`userController /api/user/signup ${error}`);
-        return response.failed({res, status: 500, message: "Server have something wrong", error: error.message});
-    }
-});
+userController.post("/signup", async (req, res) => {
+  const { username, email, password } = req.body;
 
+  if (!username || !email || !password) {
+    return response.failed({
+      res,
+      status: 400,
+      message: "Required username, email and password"
+    });
+  }
+
+  try {
+    const user = await userService.signup({ username, email, password });
+
+    return response.success({
+      res,
+      status: 201,
+      message: "Sign Up is success",
+      data: {
+        id: user.id,
+        username: user.username,
+        email: user.email
+      }
+    });
+  } catch (err) {
+    logger.error(`POST /signup: ${err.message}`);
+
+    return response.failed({
+      res,
+      status: err.status || 500,
+      message: err.message || "internal server error"
+    });
+  }
+});
 
 export default userController;
