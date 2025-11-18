@@ -21,7 +21,7 @@ userController.post("/signin", async (req, res) => {
         if(!user) return response.failed({res, status: 404, message: "Email and password is wrong"});
 
         const passCheck = await bcrypt.compare(password, user.password);
-        if(!passCheck) return response.failed({res, status: 400, message: "Email and password is wrong"});
+        if(!passCheck) return response.failed({res, status: 400, message: "Password is wrong"});
 
         const token = jwt.sign(
             {id: user.id, email: user.email},
@@ -29,7 +29,7 @@ userController.post("/signin", async (req, res) => {
             {expiresIn: '365d'}
         );
 
-        logger.info(`[INFO] ${user.email} is login`);
+        logger.info(`${user.email} is login`);
         return response.success({
             res,
             status: 200,
@@ -43,7 +43,7 @@ userController.post("/signin", async (req, res) => {
             }
         });
     } catch (error) {
-        logger.error(`[ERROR] userController /signin ${error}`);
+        logger.error(`userController /api/user/signin ${error}`);
         return response.failed({res, status: 500, message: "Server have something wrong", error: error.message});
     }
 });
@@ -55,8 +55,8 @@ userController.post(`/signup`, async (req, res) => {
     }
     try {
         const emailCheck = await UserModel.getUserByEmail({email: email});
-        if(emailCheck != null){
-            logger.warn(`[WARN] email is exist`);
+        if(emailCheck){
+            logger.warn(`email is exist`);
             return response.failed({res, status: 400, message: "Email is already exist"});
         }
         const passwordHash = await bcrypt.hash(password, 10);
@@ -69,7 +69,7 @@ userController.post(`/signup`, async (req, res) => {
         if(!data){
             return response.failed({res, status: 400, message: "Failed to signup"});
         }
-        logger.info(`[INFO] ${data.email} is login`);
+        logger.info(`${data.email} is registered`);
         return response.success({
             res,
             status: 201,
@@ -81,7 +81,7 @@ userController.post(`/signup`, async (req, res) => {
             }
         });
     } catch (error) {
-        logger.error(`[ERROR] userController /signup ${error}`);
+        logger.error(`userController /api/user/signup ${error}`);
         return response.failed({res, status: 500, message: "Server have something wrong", error: error.message});
     }
 });

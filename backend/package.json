@@ -5,7 +5,15 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon src/index.js",
-    "test": "node src/index.js"
+    "test": "node src/index.js",
+
+    "start": "pm2 start src/index.js --name backend --env production",
+    "restart": "pm2 restart backend",
+    "stop": "pm2 stop backend",
+    "delete": "pm2 delete backend",
+    "status": "pm2 status",
+
+    "save": "pm2 save"
   },
   "author": "Roy arsito batubara",
   "license": "ISC",
