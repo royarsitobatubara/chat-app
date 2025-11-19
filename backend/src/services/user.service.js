@@ -66,4 +66,18 @@ async function signin({ email, password }) {
   };
 }
 
-export default { signup, signin };
+async function getUserByEmailOrUsername({ keyword }) {
+  const user = await UserModel.findByEmailOrUsername(keyword);
+
+  if (!user || user.length === 0) {
+    const err = new Error("User is not found");
+    err.status = 404;
+    throw err;
+  }
+
+  return user;
+}
+
+
+
+export default { signup, signin, getUserByEmailOrUsername };

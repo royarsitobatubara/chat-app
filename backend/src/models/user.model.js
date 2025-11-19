@@ -28,8 +28,25 @@ async function findByEmailAndPassword(email, password) {
   }
 }
 
+async function findByEmailOrUsername(keyword) {
+  try {
+    return await userSchema.find({
+      $or: [
+        { email: { $regex: keyword, $options: "i" } },
+        { username: { $regex: keyword, $options: "i" } }
+      ]
+    }).select("-password");
+  } catch (error) {
+    logger.error(`UserModel -> findByEmailOrUsername: ${error.message}`);
+    throw error;
+  }
+}
+
+
+
 export default {
   create,
   findByEmail,
-  findByEmailAndPassword
+  findByEmailAndPassword,
+  findByEmailOrUsername
 };

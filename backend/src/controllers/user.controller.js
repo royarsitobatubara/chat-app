@@ -61,7 +61,7 @@ userController.post("/signup", async (req, res) => {
       }
     });
   } catch (err) {
-    logger.error(`POST /signup: ${err.message}`);
+    logger.error(`POST /api/user/signup: ${err.message}`);
 
     return response.failed({
       res,
@@ -70,5 +70,29 @@ userController.post("/signup", async (req, res) => {
     });
   }
 });
+
+userController.get('/search', async (req, res) => {
+  const query = req.query.user;
+
+  try {
+    const data = await userService.getUserByEmailOrUsername({ keyword: query });
+
+    return response.success({
+      res,
+      status: 200,
+      message: "Success get data",
+      data: data
+    });
+
+  } catch (err) {
+    logger.error(`GET /api/user/search?user=${query} : ${err.message}`);
+    return response.failed({
+      res,
+      status: err.status || 500,
+      message: err.message || "internal server error"
+    });
+  }
+});
+
 
 export default userController;
