@@ -8,6 +8,8 @@ import contactController from "./controllers/contact.controller.js";
 import messageSocket from "./socket/messageSocket.js";
 import contactSocket from "./socket/contactSocket.js";
 import db from "./lib/db.js";
+import ResponseHelper from "./helpers/response.js";
+import logger from "./helpers/logger.js";
 
 // ENV
 dotenv.config();
@@ -28,10 +30,12 @@ const io = new Server(httpServer, {
 db();
 
 // ROUTE
-app.get('/api', (req, res) => {
-    return res.status(200).json({
-        success: true,
-        message: "Server is run"
+app.get('/api/ping', (req, res) => {
+    logger.info('Ping success');
+    return ResponseHelper.success({
+        res,
+        status: 200,
+        message: 'Ping is success',
     });
 });
 app.use("/api/user", userController);
@@ -41,7 +45,9 @@ app.use("/api/contact", contactController);
 messageSocket(io);
 contactSocket(io);
 
+const PORT = process.env.PORT || 3000
+
 // PORT
-httpServer.listen(process.env.PORT, () => {
-    console.log(`Server run on port ${process.env.PORT}`);
+httpServer.listen(PORT, () => {
+    console.log(`Server run on port ${PORT}`);
 });

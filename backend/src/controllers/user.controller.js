@@ -26,7 +26,7 @@ userController.post("/signin", async (req, res) => {
       data
     });
   } catch (err) {
-    logger.error(`POST /signin: ${err.message}`);
+    logger.error(`[POST] /api/user/signin: ${err.message}`);
 
     return response.failed({
       res,

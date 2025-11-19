@@ -1,7 +1,7 @@
 import userSchema from "../lib/schema/user-schema.js";
 import logger from "../helpers/logger.js";
 
-async function createUser({ id, username, email, password }) {
+async function create({ id, username, email, password }) {
   try {
     return await userSchema.create({ id, username, email, password });
   } catch (error) {
@@ -29,7 +29,7 @@ async function findByEmailAndPassword(email, password) {
 }
 
 export default {
-  createUser,
+  create,
   findByEmail,
   findByEmailAndPassword
 };

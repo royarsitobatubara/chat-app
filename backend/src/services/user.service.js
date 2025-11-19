@@ -7,7 +7,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 async function signup({ username, email, password }) {
-  const exist = await UserModel.getUserByEmail({ email });
+  const exist = await UserModel.findByEmail(email);
 
   if (exist) {
     const err = new Error("Email is already exist");
@@ -34,7 +34,7 @@ async function signup({ username, email, password }) {
 }
 
 async function signin({ email, password }) {
-  const user = await UserModel.getUserByEmail({ email });
+  const user = await UserModel.findByEmail(email);
 
   if (!user) {
     const err = new Error("Email and password is wrong");
