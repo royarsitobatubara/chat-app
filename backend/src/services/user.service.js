@@ -20,7 +20,7 @@ async function signup({ username, email, password }) {
   const user = await UserModel.create({
     username,
     email,
-    password: hashed
+    password: hashed,
   });
 
   if (!user) {
@@ -62,7 +62,7 @@ async function signin({ email, password }) {
     username: user.username,
     email: user.email,
     photo: user.photo,
-    token
+    token,
   };
 }
 
@@ -77,7 +77,5 @@ async function getUserByEmailOrUsername({ keyword }) {
 
   return user;
 }
-
-
 
 export default { signup, signin, getUserByEmailOrUsername };

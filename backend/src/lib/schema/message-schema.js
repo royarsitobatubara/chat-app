@@ -3,8 +3,8 @@ import mongoose from "mongoose";
 const messageSchema = new mongoose.Schema(
     {
         message : String,
-        from    : String,
-        to      : String,
+        sender  : String,
+        receiver: String,
         type    : String,
         isRead  : Boolean,
         time    : String,

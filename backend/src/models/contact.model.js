@@ -35,7 +35,10 @@ async function getBySenderEmail({ email }) {
 // MENGAMBIL CONTACT DARI DATABASE BERDASARKAN EMAIL KITA DAN YANG DI TUJU
 async function getBySenderAndReceiverEmail({ email_from, email_to }) {
   try {
-    return await contactSchema.find({ email_from: email_from, email_to: email_to });
+    return await contactSchema.find({
+      email_from: email_from,
+      email_to: email_to,
+    });
   } catch (err) {
     logger.error(`ContactModel -> getBySenderEmail: ${err.message}`);
     throw err;
@@ -46,5 +49,5 @@ export default {
   insert,
   getByReceiverEmail,
   getBySenderEmail,
-  getBySenderAndReceiverEmail
+  getBySenderAndReceiverEmail,
 };

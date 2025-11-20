@@ -3,8 +3,10 @@ import UserModel from "../models/user.model.js";
 import logger from "../helpers/logger.js";
 
 async function addContact({ email_from, email_to }) {
-
-  const exist = await ContactModel.getBySenderAndReceiverEmail({ email_from, email_to });
+  const exist = await ContactModel.getBySenderAndReceiverEmail({
+    email_from,
+    email_to,
+  });
   if (exist && exist.length > 0) {
     const err = new Error("the contact is already exists");
     err.status = 409;
@@ -20,7 +22,7 @@ async function addContact({ email_from, email_to }) {
 
   const save = await ContactModel.insert({
     email_from,
-    email_to
+    email_to,
   });
 
   if (!save) {
@@ -30,7 +32,19 @@ async function addContact({ email_from, email_to }) {
   }
 
   logger.info(`Contact added: ${email_from} -> ${email_to}`);
-  return save;
+  return {
+    contact: {
+      id: save.id,
+      email_from: save.email_from,
+      email_to: save.email_to
+    },
+    user: {
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      photo: user.photo
+    }
+  };
 }
 
 async function getContacts(email) {

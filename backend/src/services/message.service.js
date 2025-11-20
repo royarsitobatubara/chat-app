@@ -1,9 +1,16 @@
 import messageModel from "../models/message.model.js";
 import logger from "../helpers/logger.js";
 
-async function addMessage({ message, from, to, type, isRead, time }) {
+async function addMessage({ message, sender, receiver, type, isRead, time }) {
   try {
-    const saved = await messageModel.insert({ message, from, to, type, isRead, time });
+    const saved = await messageModel.insert({
+      message,
+      sender,
+      receiver,
+      type,
+      isRead,
+      time,
+    });
     logger.info(`Message added: ${saved.message}`);
     return saved;
   } catch (err) {
@@ -24,7 +31,9 @@ async function deleteAllMessageByReceiver(to) {
     logger.info(`Message deleted: ${deleted.deletedCount}`);
     return deleted;
   } catch (err) {
-    logger.error(`messageService -> deleteAllMessageByReceiver: ${err.message}`);
+    logger.error(
+      `messageService -> deleteAllMessageByReceiver: ${err.message}`
+    );
     throw err;
   }
 }
@@ -32,7 +41,7 @@ async function deleteAllMessageByReceiver(to) {
 async function getAllMessageReceiver(to) {
   try {
     const data = await messageModel.getByReceiver({ to });
-    
+
     // Jangan lempar error jika kosong, kembalikan array kosong
     if (!data || data.length === 0) {
       logger.info(`No pending messages for ${to}`);
@@ -46,7 +55,6 @@ async function getAllMessageReceiver(to) {
     throw err;
   }
 }
-
 
 export default {
   addMessage,

@@ -1,9 +1,16 @@
 import messageSchema from "../lib/schema/message-schema.js";
 import logger from "../helpers/logger.js";
 
-async function insert({ message, from, to, type, isRead, time }) {
+async function insert({ message, sender, receiver, type, isRead, time }) {
   try {
-    return await messageSchema.create({ message, from, to, type, isRead, time });
+    return await messageSchema.create({
+      message,
+      sender,
+      receiver,
+      type,
+      isRead,
+      time,
+    });
   } catch (err) {
     logger.error(`MessageModel -> insert: ${err.message}`);
     throw err;

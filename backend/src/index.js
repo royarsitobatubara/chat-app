@@ -21,22 +21,22 @@ app.use(express.json());
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 const io = new Server(httpServer, {
-    cors: {
-        origin: "*"
-    }
+  cors: {
+    origin: "*",
+  },
 });
 
 // DATABASE
 db();
 
 // ROUTE
-app.get('/api/ping', (req, res) => {
-    logger.info('Ping success');
-    return ResponseHelper.success({
-        res,
-        status: 200,
-        message: 'Ping is success',
-    });
+app.get("/api/ping", (req, res) => {
+  logger.info("Ping success");
+  return ResponseHelper.success({
+    res,
+    status: 200,
+    message: "Ping is success",
+  });
 });
 app.use("/api/user", userController);
 app.use("/api/contact", contactController);
@@ -45,9 +45,9 @@ app.use("/api/contact", contactController);
 messageSocket(io);
 contactSocket(io);
 
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 3000;
 
 // PORT
 httpServer.listen(PORT, () => {
-    console.log(`Server run on port ${PORT}`);
+  console.log(`Server run on port ${PORT}`);
 });

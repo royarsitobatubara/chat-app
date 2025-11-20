@@ -25,7 +25,7 @@ contactController.post("/add", async (req, res) => {
       message: "success to add contact",
       data
     });
-  } catch (err) {
+  } catch (err) {1
     logger.error(`POST /add: ${err.message}`);
 
     return response.failed({

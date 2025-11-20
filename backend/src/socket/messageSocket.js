@@ -5,23 +5,25 @@ export default function messageSocket(io) {
   const onlineUsers = {};
 
   io.on("connection", (socket) => {
-
     socket.on("register", async (email) => {
-        try {
-            onlineUsers[email] = socket.id;
+      try {
+        onlineUsers[email] = socket.id;
 
-            const pendingMessages = await messageService.getAllMessageReceiver(email);
-            if (pendingMessages.length > 0) {
-            pendingMessages.forEach(msg => io.to(socket.id).emit("receive_message", msg));
-            await messageService.deleteAllMessageByReceiver(email);
-            }
-
-            logger.info(`ONLINE ${email}: ${socket.id}`);
-        } catch (err) {
-            logger.error(`socket register error: ${err.message}`);
+        const pendingMessages = await messageService.getAllMessageReceiver(
+          email
+        );
+        if (pendingMessages.length > 0) {
+          pendingMessages.forEach((msg) =>
+            io.to(socket.id).emit("receive_message", msg)
+          );
+          await messageService.deleteAllMessageByReceiver(email);
         }
-    });
 
+        logger.info(`ONLINE ${email}: ${socket.id}`);
+      } catch (err) {
+        logger.error(`socket register error: ${err.message}`);
+      }
+    });
 
     socket.on("send_message", async (data) => {
       try {
@@ -37,7 +39,7 @@ export default function messageSocket(io) {
     });
 
     socket.on("receive_message", (msg) => {
-        console.log("Pesan diterima:", msg);
+      console.log("Pesan diterima:", msg);
     });
 
     socket.on("disconnect", () => {
@@ -49,6 +51,5 @@ export default function messageSocket(io) {
         }
       }
     });
-    
   });
 }
