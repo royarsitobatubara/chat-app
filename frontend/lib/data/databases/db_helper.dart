@@ -34,7 +34,6 @@ class DBHelper {
       CREATE TABLE users (
         id TEXT PRIMARY KEY,
         email TEXT NOT NULL,
-        password TEXT NOT NULL,
         username TEXT NOT NULL,
         photo TEXT
       )
@@ -50,14 +49,22 @@ class DBHelper {
 
     await db.execute('''
       CREATE TABLE messages (
-        id TEXT PRIMARY KEY
-        message TEXT NOT NULL
-        from TEXT NOT NULL
-        to TEXT NOT NULL
-        type TEXT NOT NULL
-        isRead INTEGER
-        time TEXT      
+        id TEXT PRIMARY KEY,
+        message TEXT NOT NULL,
+        sender TEXT NOT NULL,
+        receiver TEXT NOT NULL,
+        type TEXT NOT NULL,
+        isRead INTEGER,
+        time TEXT
       )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE pending_actions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        action_type TEXT NOT NULL,     
+        payload TEXT NOT NULL,      
+      );
     ''');
   }
 }

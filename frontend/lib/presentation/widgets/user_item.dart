@@ -5,12 +5,16 @@ class UserItem extends StatelessWidget {
   final String username;
   final String email;
   final Color colorAvatar;
+  final VoidCallback handle;
+  final bool isAdded;
 
   const UserItem({
     super.key,
     required this.username,
     required this.email,
     required this.colorAvatar,
+    required this.handle,
+    required this.isAdded,
   });
 
   @override
@@ -60,12 +64,19 @@ class UserItem extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
             gradient: LinearGradient(
-              colors: [AppColors.blue1, AppColors.blue2],
+              colors: [
+                AppColors.blue1.withValues(alpha: .5),
+                AppColors.blue2.withValues(alpha: .9),
+              ],
             ),
           ),
           child: IconButton(
-            onPressed: () {},
-            icon: Icon(Icons.add, color: Colors.white, size: 24),
+            onPressed: handle,
+            icon: Icon(
+              isAdded ? Icons.cancel_outlined : Icons.add,
+              color: Colors.white,
+              size: 24,
+            ),
           ),
         ),
       ),

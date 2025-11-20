@@ -8,33 +8,32 @@ class HttpClient {
 
   const HttpClient({this.defaultHeaders});
 
-  // GET request
+  Map<String, String> get _headers =>
+      defaultHeaders ?? {'Content-Type': 'application/json'};
+
+  Map<String, dynamic> _safeDecode(String body) {
+    try {
+      return jsonDecode(body);
+    } catch (_) {
+      return {};
+    }
+  }
+
   Future<ApiResponse> get({required String endpoint}) async {
     try {
-      final response = await http.get(
-        Uri.parse(endpoint),
-        headers: defaultHeaders ?? {'Content-Type': 'application/json'},
-      );
-
-      final Map<String, dynamic> body = jsonDecode(response.body);
+      final response = await http.get(Uri.parse(endpoint), headers: _headers);
+      final body = _safeDecode(response.body);
 
       if (body['success'] == true) {
         return ApiResponse.fromJson(body);
-      } else {
-        AppLogger.error(
-          body['message']?.toString() ?? 'Unknown message',
-          body['error']?.toString(),
-        );
-
-        return ApiResponse(
-          success: false,
-          message: body['message'] ?? '',
-          error: body['error']?.toString() ?? 'Unknown error',
-        );
       }
-    } catch (e, s) {
-      AppLogger.error(e.toString(), e, s);
 
+      return ApiResponse(
+        success: false,
+        message: body['message']?.toString() ?? 'Request failed',
+        error: body['error']?.toString(),
+      );
+    } catch (e) {
       return ApiResponse(
         success: false,
         message: 'Failed to connect',
@@ -43,7 +42,34 @@ class HttpClient {
     }
   }
 
-  // POST request
+  Future<ApiResponse> delete({
+    required String endpoint,
+    required String id,
+  }) async {
+    try {
+      final url = '$endpoint$id';
+      final response = await http.delete(Uri.parse(url), headers: _headers);
+      final body = _safeDecode(response.body);
+
+      if (body['success'] == true) {
+        return ApiResponse.fromJson(body);
+      }
+
+      return ApiResponse(
+        success: false,
+        message: body['message']?.toString() ?? 'Request failed',
+        error: body['error']?.toString(),
+      );
+    } catch (e) {
+      AppLogger.error('[DELETE] error: $e');
+      return ApiResponse(
+        success: false,
+        message: 'Failed to connect',
+        error: e.toString(),
+      );
+    }
+  }
+
   Future<ApiResponse> post({
     required String endpoint,
     required Map<String, dynamic> data,
@@ -51,21 +77,21 @@ class HttpClient {
     try {
       final response = await http.post(
         Uri.parse(endpoint),
-        headers: defaultHeaders ?? {'Content-Type': 'application/json'},
+        headers: _headers,
         body: jsonEncode(data),
       );
 
-      final Map<String, dynamic> body = jsonDecode(response.body);
+      final body = _safeDecode(response.body);
 
       if (body['success'] == true) {
         return ApiResponse.fromJson(body);
-      } else {
-        return ApiResponse(
-          success: false,
-          message: body['message'] ?? '',
-          error: body['error']?.toString() ?? 'Unknown error',
-        );
       }
+
+      return ApiResponse(
+        success: false,
+        message: body['message']?.toString() ?? 'Request failed',
+        error: body['error']?.toString(),
+      );
     } catch (e) {
       return ApiResponse(
         success: false,

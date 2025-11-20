@@ -1,8 +1,8 @@
 class MessageModel {
   final String? id;
   final String message;
-  final String from;
-  final String to;
+  final String sender;
+  final String receiver;
   final String? type;
   final bool isRead;
   final String time;
@@ -10,8 +10,8 @@ class MessageModel {
   MessageModel({
     this.id,
     required this.message,
-    required this.from,
-    required this.to,
+    required this.sender,
+    required this.receiver,
     this.type,
     required this.isRead,
     required this.time,
@@ -21,8 +21,8 @@ class MessageModel {
     return MessageModel(
       id: json['id'] != null ? json['id'] as String : null,
       message: json['message'] as String,
-      from: json['from'] as String,
-      to: json['to'] as String,
+      sender: json['sender'] as String,
+      receiver: json['receiver'] as String,
       type: json['type'] as String,
       isRead: json['isRead'] as bool,
       time: json['time'] as String,
@@ -33,8 +33,8 @@ class MessageModel {
     return {
       'id': id,
       'message': message,
-      'from': from,
-      'to': to,
+      'sender': sender,
+      'receiver': receiver,
       'type': type ?? 'text',
       'isRead': isRead==true? 1 : 0,
       'time': time,

@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/constants/app_colors.dart';
+import 'package:frontend/data/databases/contact_db_service.dart';
+import 'package:frontend/data/models/contact_model.dart';
+import 'package:frontend/data/preferences/user_preferences.dart';
+import 'package:frontend/data/services/contact_service.dart';
 import 'package:frontend/data/services/user_service.dart';
 import 'package:frontend/presentation/widgets/user_item.dart';
 import 'package:go_router/go_router.dart';
@@ -13,17 +17,60 @@ class AddContactScreen extends StatefulWidget {
 
 class _AddContactScreenState extends State<AddContactScreen> {
   final TextEditingController _searchCtrl = TextEditingController();
+  String? _message;
   List<dynamic> _userList = [];
+  List<ContactModel> _contactList = [];
 
   Future<void> searchHandle() async {
     if (_searchCtrl.text.trim().isEmpty) {
       return;
     }
+
     final data = await UserService().getUserByKeyword(
       keyword: _searchCtrl.text,
     );
+
     setState(() {
       _userList = data.data ?? [];
+    });
+  }
+
+  Future<void> addContactHandle({
+    required String emailTo,
+    String? id,
+    required bool isAdded,
+  }) async {
+    // DELETE contact
+    if (isAdded && id != null) {
+      final data = await ContactService().deleteContactById(id: id);
+      setState(() {
+        _message = data.message;
+      });
+      getAllContact();
+      return;
+    }
+
+    // ADD contact
+    final emailFrom = await UserPreferences.getEmail();
+    final data = await ContactService().addContact(
+      emailFrom: emailFrom,
+      emailTo: emailTo,
+    );
+
+    setState(() {
+      _message = data.message;
+    });
+
+    getAllContact();
+  }
+
+  Future<void> getAllContact() async {
+    final emailFrom = await UserPreferences.getEmail();
+    final contactFromDB = await ContactDbService.getAllContact(
+      email: emailFrom,
+    );
+    setState(() {
+      _contactList = contactFromDB;
     });
   }
 
@@ -31,6 +78,12 @@ class _AddContactScreenState extends State<AddContactScreen> {
   void dispose() {
     _searchCtrl.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getAllContact();
   }
 
   @override
@@ -82,8 +135,9 @@ class _AddContactScreenState extends State<AddContactScreen> {
                       ),
                     ),
                   ),
+
                   const SizedBox(width: 16),
-                  // Title dengan gradient
+
                   Expanded(
                     child: ShaderMask(
                       shaderCallback: (bounds) => LinearGradient(
@@ -108,7 +162,6 @@ class _AddContactScreenState extends State<AddContactScreen> {
               ),
             ),
 
-            // Search Field dengan gradient border
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Container(
@@ -172,13 +225,27 @@ class _AddContactScreenState extends State<AddContactScreen> {
             // Result Count
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Text(
-                "${_userList.length} users found",
-                style: TextStyle(
-                  color: Colors.white.withValues(alpha: .6),
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "${_userList.length} users found",
+                    style: TextStyle(
+                      color: Colors.white.withValues(alpha: .6),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  if (_message != null)
+                    Text(
+                      _message!,
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: .6),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                ],
               ),
             ),
 
@@ -202,10 +269,25 @@ class _AddContactScreenState extends State<AddContactScreen> {
                       itemCount: _userList.length,
                       itemBuilder: (context, index) {
                         final user = _userList[index];
+                        final isAdded = _contactList.any(
+                          (itm) => itm.emailTo == user['email'],
+                        );
                         return UserItem(
                           username: user['username'],
                           email: user['email'],
                           colorAvatar: AppColors.blue1,
+                          handle: () => addContactHandle(
+                            emailTo: user['email'].toString(),
+                            id: isAdded == false
+                                ? null
+                                : _contactList
+                                      .firstWhere(
+                                        (itm) => itm.emailTo == user['email'],
+                                      )
+                                      .id,
+                            isAdded: isAdded,
+                          ),
+                          isAdded: isAdded,
                         );
                       },
                     ),

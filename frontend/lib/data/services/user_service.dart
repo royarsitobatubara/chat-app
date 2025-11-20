@@ -1,6 +1,7 @@
 import 'package:frontend/core/constants/api_url.dart';
 import 'package:frontend/core/network/api_response.dart';
 import 'package:frontend/core/network/http_client.dart';
+import 'package:frontend/data/databases/user_db_service.dart';
 
 class UserService {
   final client = HttpClient();
@@ -9,8 +10,21 @@ class UserService {
     required String email,
     required String password,
   }) async {
-    final data = {'email': email, 'password': password};
-    return await client.post(endpoint: ApiUrl.signIn, data: data);
+    if (email.isEmpty || password.isEmpty) {
+      return ApiResponse(success: false, message: 'All fields cannot be empty');
+    }
+    try {
+      return await client.post(
+        endpoint: ApiUrl.signIn,
+        data: {'email': email, 'password': password},
+      );
+    } catch (e) {
+      return ApiResponse(
+        success: false,
+        message: 'Sign in failed',
+        error: e.toString(),
+      );
+    }
   }
 
   Future<ApiResponse> signUp({
@@ -18,16 +32,84 @@ class UserService {
     required String password,
     required String username,
   }) async {
-    final data = {'email': email, 'password': password, 'username': username};
-    return await client.post(endpoint: ApiUrl.signUp, data: data);
+    if (email.isEmpty || password.isEmpty || username.isEmpty) {
+      return ApiResponse(success: false, message: 'All fields cannot be empty');
+    }
+    try {
+      return await client.post(
+        endpoint: ApiUrl.signUp,
+        data: {'email': email, 'password': password, 'username': username},
+      );
+    } catch (e) {
+      return ApiResponse(
+        success: false,
+        message: 'Sign up failed',
+        error: e.toString(),
+      );
+    }
   }
 
   Future<ApiResponse> pingServer() async {
-    return await client.get(endpoint: ApiUrl.ping);
+    try {
+      return await client.get(endpoint: ApiUrl.ping);
+    } catch (e) {
+      return ApiResponse(
+        success: false,
+        message: 'Ping failed',
+        error: e.toString(),
+      );
+    }
   }
 
   Future<ApiResponse> getUserByKeyword({required String keyword}) async {
-    final data = '${ApiUrl.getUserByKeyword}$keyword';
-    return await client.get(endpoint: data);
+    try {
+      final online = await client.get(
+        endpoint: '${ApiUrl.getUserByKeyword}$keyword',
+      );
+
+      if (online.success == true) return online;
+
+      final local = await UserDbService.getUserByKeyword(keyword: keyword);
+
+      return ApiResponse(
+        success: true,
+        message: 'Loaded from local DB',
+        data: local.map((e) => e.toJson()).toList(),
+      );
+    } catch (e) {
+      final local = await UserDbService.getUserByKeyword(keyword: keyword);
+
+      return ApiResponse(
+        success: true,
+        message: 'Loaded from local DB (offline mode)',
+        data: local.map((e) => e.toJson()).toList(),
+        error: e.toString(),
+      );
+    }
+  }
+
+  Future<ApiResponse> deleteUserById({required String id}) async {
+    if (id.isEmpty) {
+      return ApiResponse(success: false, message: 'ID is required');
+    }
+    try {
+      final res = await client.delete(endpoint: ApiUrl.deleteUserById, id: id);
+      if (res.success != true) {
+        return ApiResponse(
+          success: false,
+          message: res.message,
+          error: res.error ?? 'Unknown error',
+        );
+      }
+      await UserDbService.deleteUserById(id: id);
+      return res;
+    } catch (e) {
+      await UserDbService.deleteUserById(id: id);
+      return ApiResponse(
+        success: true,
+        message: 'User deleted locally (offline mode)',
+        error: e.toString(),
+      );
+    }
   }
 }
