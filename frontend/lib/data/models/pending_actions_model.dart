@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class PendingActionsModel {
   final int? id;
   final String actionType;
@@ -12,7 +14,7 @@ class PendingActionsModel {
   factory PendingActionsModel.fromJson(Map<String, dynamic> json) {
     return PendingActionsModel(
       actionType: json['action_type'],
-      payload: json['payload'],
+      payload: jsonDecode(json['payload']),
     );
   }
 

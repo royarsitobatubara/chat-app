@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:frontend/data/databases/db_helper.dart';
 import 'package:frontend/data/models/pending_actions_model.dart';
 
@@ -13,7 +14,10 @@ class PendingActionsDb {
 
     await db.insert(
       table,
-      PendingActionsModel(actionType: actionType, payload: payload).toJson(),
+      {
+        'action_type': actionType,
+        'payload': jsonEncode(payload)
+      },
     );
   }
 

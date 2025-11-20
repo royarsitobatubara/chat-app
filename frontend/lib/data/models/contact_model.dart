@@ -1,10 +1,10 @@
 class ContactModel {
-  final String id;
+  final String? id;
   final String emailFrom;
   final String emailTo;
 
   ContactModel({
-    required this.id,
+    this.id,
     required this.emailFrom,
     required this.emailTo,
   });

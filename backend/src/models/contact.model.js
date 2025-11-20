@@ -1,7 +1,7 @@
 import logger from "../helpers/logger.js";
 import contactSchema from "../lib/schema/contact-schema.js";
 
-// MEMASUKAN CONTACT KE DATABASE
+// INSERT
 async function insert({ id, email_from, email_to }) {
   try {
     const doc = await contactSchema.create({ id, email_from, email_to });
@@ -12,7 +12,7 @@ async function insert({ id, email_from, email_to }) {
   }
 }
 
-// MENGAMBIL CONTACT DARI DATABASE BERDASARKAN EMAIL YANG DI TUJU
+// GET by receiver
 async function getByReceiverEmail({ email }) {
   try {
     return await contactSchema.findOne({ email_to: email });
@@ -22,7 +22,7 @@ async function getByReceiverEmail({ email }) {
   }
 }
 
-// MENGAMBIL CONTACT DARI DATABASE BERDASARKAN EMAIL KITA
+// GET by sender
 async function getBySenderEmail({ email }) {
   try {
     return await contactSchema.find({ email_from: email });
@@ -32,15 +32,22 @@ async function getBySenderEmail({ email }) {
   }
 }
 
-// MENGAMBIL CONTACT DARI DATABASE BERDASARKAN EMAIL KITA DAN YANG DI TUJU
+// GET by sender + receiver
 async function getBySenderAndReceiverEmail({ email_from, email_to }) {
   try {
-    return await contactSchema.find({
-      email_from: email_from,
-      email_to: email_to,
-    });
+    return await contactSchema.findOne({ email_from, email_to });
   } catch (err) {
-    logger.error(`ContactModel -> getBySenderEmail: ${err.message}`);
+    logger.error(`ContactModel -> getBySenderAndReceiverEmail: ${err.message}`);
+    throw err;
+  }
+}
+
+// DELETE
+async function deleteContactById({ id }) {
+  try {
+    return await contactSchema.deleteOne({ id });
+  } catch (err) {
+    logger.error(`ContactModel -> deleteContactById: ${err.message}`);
     throw err;
   }
 }
@@ -50,4 +57,5 @@ export default {
   getByReceiverEmail,
   getBySenderEmail,
   getBySenderAndReceiverEmail,
+  deleteContactById
 };

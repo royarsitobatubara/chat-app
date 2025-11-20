@@ -26,7 +26,7 @@ contactController.post("/add", async (req, res) => {
       data
     });
   } catch (err) {1
-    logger.error(`POST /add: ${err.message}`);
+    logger.error(`POST /api/contact/add: ${err.message}`);
 
     return response.failed({
       res,
@@ -44,7 +44,7 @@ contactController.get("/:email", async (req, res) => {
     return response.failed({
       res,
       status: 400,
-      message: "email is required"
+      message: "Email is required"
     });
   }
 
@@ -58,7 +58,36 @@ contactController.get("/:email", async (req, res) => {
       data
     });
   } catch (err) {
-    logger.error(`GET /:email: ${err.message}`);
+    logger.error(`GET /api/contact/:email: ${err.message}`);
+
+    return response.failed({
+      res,
+      status: err.status || 500,
+      message: err.message,
+      data: err.data
+    });
+  }
+});
+
+contactController.delete('/:id', async (req, res) => {
+  const {id} = req.params;
+  if(!id){
+    return response.failed({
+      res,
+      status: 400,
+      message: "Id is required"
+    });
+  }
+  try {
+    const data = await contactService.deleteContactById({id: id});
+    return response.success({
+      res,
+      status: 200,
+      message: "Success delete contact",
+      data
+    });
+  } catch (error) {
+    logger.error(`DELETE /api/contact/:id: ${err.message}`);
 
     return response.failed({
       res,

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/constants/app_colors.dart';
+import 'package:frontend/core/utils/app_logger.dart';
 import 'package:frontend/data/preferences/data_preferences.dart';
+import 'package:frontend/data/services/sync_service.dart';
 import 'package:frontend/data/services/user_service.dart';
 import 'package:frontend/presentation/widgets/button_widget.dart';
 import 'package:go_router/go_router.dart';
@@ -17,24 +19,37 @@ class _SplashScreenState extends State<SplashScreen> {
   bool _isOffline = false;
 
   Future<void> splashHandle() async {
-    final data = await UserService().pingServer();
+    try {
+      final data = await UserService().pingServer();
 
-    // Jika server sedang down
-    if (data.success == false) {
-      debugPrint('Error in splashHandle: ${data.error}');
-      setState(() {
-        _isOffline = true;
-        _isLoading = false;
-      });
-      return;
+      // Jika server sedang down
+      if (data.success == false) {
+        debugPrint('Error in splashHandle: ${data.error}');
+        setState(() {
+          _isOffline = true;
+          _isLoading = false;
+        });
+        return; // jangan navigate
+      }
+
+      final isLogin = await DataPreferences.getLogin();
+
+      if (isLogin == true) {
+        await SyncService.syncPending();
+      }
+
+      await Future.delayed(const Duration(seconds: 2));
+
+      if (!mounted) return;
+      context.go(isLogin == true ? '/home' : '/signin');
+    } catch (e) {
+      AppLogger.error('Splash fatal: $e');
+
+      // fallback supaya tidak ngegantung
+      final isLogin = await DataPreferences.getLogin();
+      if (!mounted) return;
+      context.go(isLogin == true ? '/home' : '/signin');
     }
-
-    // Jika terhubung dengan server
-    final isLogin = await DataPreferences.getLogin();
-    // final token = await DataPreferences.getToken();
-    await Future.delayed(Duration(seconds: 2));
-    if (!mounted) return;
-    context.go(isLogin == true ? '/home' : '/signin');
   }
 
   Future<void> offlineModeHandle() async {

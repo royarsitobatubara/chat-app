@@ -88,28 +88,4 @@ class UserService {
     }
   }
 
-  Future<ApiResponse> deleteUserById({required String id}) async {
-    if (id.isEmpty) {
-      return ApiResponse(success: false, message: 'ID is required');
-    }
-    try {
-      final res = await client.delete(endpoint: ApiUrl.deleteUserById, id: id);
-      if (res.success != true) {
-        return ApiResponse(
-          success: false,
-          message: res.message,
-          error: res.error ?? 'Unknown error',
-        );
-      }
-      await UserDbService.deleteUserById(id: id);
-      return res;
-    } catch (e) {
-      await UserDbService.deleteUserById(id: id);
-      return ApiResponse(
-        success: true,
-        message: 'User deleted locally (offline mode)',
-        error: e.toString(),
-      );
-    }
-  }
 }

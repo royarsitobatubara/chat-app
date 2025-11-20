@@ -63,8 +63,8 @@ class DBHelper {
       CREATE TABLE pending_actions (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         action_type TEXT NOT NULL,     
-        payload TEXT NOT NULL,      
-      );
+        payload TEXT NOT NULL   
+      )
     ''');
   }
 }

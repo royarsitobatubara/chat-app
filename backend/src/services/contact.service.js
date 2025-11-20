@@ -7,15 +7,15 @@ async function addContact({ email_from, email_to }) {
     email_from,
     email_to,
   });
-  if (exist && exist.length > 0) {
-    const err = new Error("the contact is already exists");
+  if (exist) {
+    const err = new Error("Contact already exist");
     err.status = 409;
     throw err;
   }
 
   const user = await UserModel.findByEmail(email_to);
   if (!user) {
-    const err = new Error("user is not found");
+    const err = new Error("User not found");
     err.status = 404;
     throw err;
   }
@@ -26,7 +26,7 @@ async function addContact({ email_from, email_to }) {
   });
 
   if (!save) {
-    const err = new Error("failed to save contact");
+    const err = new Error("Failed add contact");
     err.status = 400;
     throw err;
   }
@@ -51,7 +51,7 @@ async function getContacts(email) {
   const data = await ContactModel.getBySenderEmail({ email });
 
   if (!data || data.length === 0) {
-    const err = new Error("contact not found");
+    const err = new Error("Contact not found");
     err.status = 404;
     err.data = [];
     throw err;
@@ -60,4 +60,16 @@ async function getContacts(email) {
   return data;
 }
 
-export default { addContact, getContacts };
+async function deleteContactById({ id }) {
+  const data = await ContactModel.deleteContactById({ id: id });
+
+  if(!data || data.deletedCount === 0){
+    const err = new Error("Failed delete contact");
+    err.status = 400;
+    throw err;
+  }
+
+  return data;
+}
+
+export default { addContact, getContacts, deleteContactById };
