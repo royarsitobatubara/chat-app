@@ -31,7 +31,7 @@ contactController.post("/add", async (req, res) => {
     return response.failed({
       res,
       status: err.status || 500,
-      message: err.message,
+      message: err.message || 'internal server error',
       data: err.data
     });
   }
@@ -63,39 +63,43 @@ contactController.get("/:email", async (req, res) => {
     return response.failed({
       res,
       status: err.status || 500,
-      message: err.message,
+      message: err.message || 'internal server error',
       data: err.data
     });
   }
 });
 
 contactController.delete('/:id', async (req, res) => {
-  const {id} = req.params;
-  if(!id){
+  const { id } = req.params;
+
+  if (!id) {
     return response.failed({
       res,
       status: 400,
       message: "Id is required"
     });
   }
+
   try {
-    const data = await contactService.deleteContactById({id: id});
+    const data = await contactService.deleteContactById({ id });
+
     return response.success({
       res,
       status: 200,
       message: "Success delete contact",
       data
     });
-  } catch (error) {
+
+  } catch (err) {
     logger.error(`DELETE /api/contact/:id: ${err.message}`);
 
     return response.failed({
       res,
       status: err.status || 500,
-      message: err.message,
-      data: err.data
+      message: err.message || 'internal server error'
     });
   }
 });
+
 
 export default contactController;

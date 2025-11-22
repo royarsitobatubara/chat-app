@@ -78,4 +78,63 @@ async function getUserByEmailOrUsername({ keyword }) {
   return user;
 }
 
-export default { signup, signin, getUserByEmailOrUsername };
+
+// UPDATE
+
+async function updateUsernameByEmail({ email, username }) {
+  const res = await UserModel.findByEmail(email);
+  if (!res) {
+    const err = new Error("User not found");
+    err.status = 404;
+    throw err;
+  }
+  const user = await UserModel.updateUsernameByEmail({
+    email: email,
+    username: username
+  });
+  if (user.modifiedCount === 0) {
+    const err = new Error("Failed update username");
+    err.status = 400;
+    throw err;
+  }
+
+  return user;
+}
+
+
+async function updatePasswordByEmail({ email, passwordOld, passwordNew }) {
+  const user = await UserModel.findByEmail(email);
+
+  if (!user) {
+    const err = new Error("User not found");
+    err.status = 404;
+    throw err;
+  }
+
+  const passOld = user.password;
+  const passCheck = await bcrypt.compare(passwordOld, passOld);
+
+  if (!passCheck) {
+    const err = new Error("Password is wrong");
+    err.status = 400;
+    throw err;
+  }
+
+  const passNew = await bcrypt.hash(passwordNew, 10);
+
+  const result = await UserModel.updatePasswordByEmail({
+    email: email,
+    password: passNew
+  });
+
+  if (!result || result.modifiedCount === 0) {
+    const err = new Error("Failed to update password");
+    err.status = 400;
+    throw err;
+  }
+
+  return result;
+}
+
+
+export default { signup, signin, getUserByEmailOrUsername, updateUsernameByEmail, updatePasswordByEmail };

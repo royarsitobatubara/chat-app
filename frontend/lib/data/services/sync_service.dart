@@ -34,17 +34,29 @@ class SyncService {
           if (res.success == true || res.message == 'Contact already exists') {
             success = true;
           }
-        } else if (type == 'update_username') {
+        }
+        // UPDATE USERNAME
+        else if (type == 'update_username') {
           final res = await _userService.updateUsername(
-            email: payload['username'],
+            email: payload['email'],
             username: payload['username'],
           );
           if (res.success == true) {
             success = true;
           }
         }
+        // UPDATE PASSWORD
+        else if (type == 'update_password') {
+          final res = await _userService.updatePassword(
+            email: payload['email'],
+            passOld: payload['passNew'],
+            passNew: payload['passOld'],
+          );
+          if (res.success == true) {
+            success = true;
+          }
+        }
       } catch (_) {
-        // Error jaringan → jangan hapus pending
         success = false;
       }
 

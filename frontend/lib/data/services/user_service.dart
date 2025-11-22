@@ -147,4 +147,51 @@ class UserService {
       );
     }
   }
+
+  Future<ApiResponse> updatePassword({
+    required String email,
+    required String passOld,
+    required String passNew,
+  }) async {
+    if (email.trim().isEmpty ||
+        passOld.trim().isEmpty ||
+        passNew.trim().isEmpty) {
+      return ApiResponse(success: false, message: 'All fields cannot be empty');
+    }
+
+    try {
+      // kirim ke server
+      final data = await client.update(
+        endpoint: ApiUrl.updatePassword,
+        data: {'email': email, 'passOld': passOld, 'passNew': passNew},
+      );
+
+      // gagal tapi bukan internal error: masukkan ke pending
+      if (data.message != 'internal server error') {
+        await PendingActionsDb.add(
+          actionType: 'update_password',
+          payload: {'email': email, 'passOld': passOld, 'passNew': passNew},
+        );
+      }
+
+      return ApiResponse(
+        success: data.success,
+        message: data.message,
+        error: data.error ?? "Unknown error",
+      );
+    } catch (e) {
+      AppLogger.error('Error : $e');
+
+      await PendingActionsDb.add(
+        actionType: 'update_password',
+        payload: {'email': email, 'passOld': passOld, 'passNew': passNew},
+      );
+
+      return ApiResponse(
+        success: false,
+        message: 'Update password failed', // <-- jangan sign up
+        error: e.toString(),
+      );
+    }
+  }
 }

@@ -61,14 +61,19 @@ async function getContacts(email) {
 }
 
 async function deleteContactById({ id }) {
-  const data = await ContactModel.deleteContactById({ id: id });
-
-  if(!data || data.deletedCount === 0){
+  const check = await ContactModel.getById(id);
+  if(!check){
+    const err = new Error("Contact not found");
+    err.status = 404;
+    throw err;
+  }
+  const data = await ContactModel.deleteContactById({ id: check.id });
+  if(!data){
     const err = new Error("Failed delete contact");
     err.status = 400;
     throw err;
   }
-
+  logger.info(`Contact deleted: ${check.email_from} -> ${check.email_to}`);
   return data;
 }
 

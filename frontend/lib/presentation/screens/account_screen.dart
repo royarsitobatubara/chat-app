@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/constants/app_colors.dart';
+import 'package:frontend/data/preferences/data_preferences.dart';
 import 'package:frontend/data/preferences/user_preferences.dart';
 import 'package:frontend/presentation/widgets/app_bar_custom.dart';
 import 'package:go_router/go_router.dart';
@@ -19,6 +20,13 @@ class _AccountScreenState extends State<AccountScreen> {
     setState(() {
       _email = email;
     });
+  }
+
+  void logOutHandle() async {
+    await DataPreferences.setLogin(false);
+    await UserPreferences.setEmail('');
+    if (!mounted) return;
+    context.go('/splash');
   }
 
   @override
@@ -65,6 +73,7 @@ class _AccountScreenState extends State<AccountScreen> {
                       value: '******',
                       icon: Icons.lock_outline,
                       route: '/edit-password',
+                      extra: _email,
                     ),
 
                     const SizedBox(height: 20),
@@ -87,7 +96,7 @@ class _AccountScreenState extends State<AccountScreen> {
                       label: 'Logout',
                       icon: Icons.logout,
                       isDestructive: true,
-                      onTap: () {},
+                      onTap: () => logOutHandle(),
                     ),
                   ],
                 ),

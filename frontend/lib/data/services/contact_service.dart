@@ -34,14 +34,27 @@ class ContactService {
             emailTo: contactData['email_to'],
           ),
         );
+        // CEK DI DB KALO ADA DATA USER
+        final checkDBUser = await UserDbService.getUserByEmail(
+          email: userData['email'],
+        );
+        // JIKA TIDAK MAKA TAMBAHKAN DATA USER KE DB
+        if (checkDBUser == null) {
+          await UserDbService.addUser(
+            data: UserModel(
+              id: userData['id'],
+              email: userData['email'],
+              username: userData['username'],
+              photo: userData['photo'],
+            ),
+          );
+        }
+      }
 
-        await UserDbService.addUser(
-          data: UserModel(
-            id: userData['id'],
-            email: userData['email'],
-            username: userData['username'],
-            photo: userData['photo'],
-          ),
+      if (res.message == 'internal server error') {
+        await PendingActionsDb.add(
+          actionType: 'add_contact',
+          payload: {'email_from': emailFrom, 'email_to': emailTo},
         );
       }
 
@@ -60,20 +73,18 @@ class ContactService {
     }
   }
 
+  // PERBAIKAN METHOD DELETE CONTACT
   Future<ApiResponse> deleteContactById({required String id}) async {
     try {
-      // HAPUS DI LOCAL DULU
-      await ContactDbService.deleteContactById(id: id);
-      await UserDbService.deleteUserById(id: id);
-
-      // COBA HAPUS DARI SERVER
+      // HAPUS DARI SERVER DULU
       final res = await client.delete(
-        endpoint: ApiUrl.getContactByEmail,
+        endpoint: ApiUrl.deleteContactById,
         id: id,
       );
 
-      // JIKA BERHASIL MAKA LANGSUNG KIRIM RESPON
+      // JIKA BERHASIL MAKA HAPUS DARI LOCAL
       if (res.success == true) {
+        await ContactDbService.deleteContactById(id: id);
         return res;
       }
 
@@ -85,13 +96,16 @@ class ContactService {
 
       return res;
     } catch (e) {
+      // JIKA ERROR, MASIH COBA HAPUS DARI LOCAL DAN TAMBAH KE PENDING
+      await ContactDbService.deleteContactById(id: id);
       await PendingActionsDb.add(
         actionType: 'delete_contact',
         payload: {'id': id},
       );
+
       return ApiResponse(
         success: false,
-        message: 'Delete contact failed',
+        message: 'Delete contact failed, saved to pending',
         error: e.toString(),
       );
     }

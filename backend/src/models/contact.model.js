@@ -22,6 +22,9 @@ async function getByReceiverEmail({ email }) {
   }
 }
 
+// GET all by sender
+
+
 // GET by sender
 async function getBySenderEmail({ email }) {
   try {
@@ -42,20 +45,31 @@ async function getBySenderAndReceiverEmail({ email_from, email_to }) {
   }
 }
 
-// DELETE
+// DELETE by id
 async function deleteContactById({ id }) {
   try {
-    return await contactSchema.deleteOne({ id });
+    return await contactSchema.deleteOne({_id: id});
   } catch (err) {
     logger.error(`ContactModel -> deleteContactById: ${err.message}`);
     throw err;
   }
 }
 
+async function getById({ id }) {
+  try {
+    return await contactSchema.findOne(id);
+  } catch (err) {
+    logger.error(`ContactModel -> getById: ${err.message}`);
+    throw err;
+  }
+}
+
+
 export default {
   insert,
   getByReceiverEmail,
   getBySenderEmail,
   getBySenderAndReceiverEmail,
-  deleteContactById
+  deleteContactById,
+  getById
 };

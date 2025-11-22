@@ -52,7 +52,10 @@ final router = GoRouter(
     ),
     GoRoute(
       path: '/edit-password',
-      builder: (context, state) => const EditPasswordScreen(),
+      builder: (context, state){
+        final email = state.extra as String;
+        return EditPasswordScreen(email: email,);
+      },
     ),
   ],
 );

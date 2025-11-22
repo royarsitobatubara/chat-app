@@ -6,7 +6,7 @@ async function create({ id, username, email, password }) {
   try {
     return await userSchema.create({ id, username, email, password, photo: null });
   } catch (err) {
-    logger.err(`UserModel -> createUser: ${err.message}`);
+    logger.error(`UserModel -> createUser: ${err.message}`);
     throw err;
   }
 }
@@ -16,7 +16,7 @@ async function findByEmail(email) {
   try {
     return await userSchema.findOne({ email });
   } catch (err) {
-    logger.err(`UserModel -> findByEmail: ${err.message}`);
+    logger.error(`UserModel -> findByEmail: ${err.message}`);
     throw err;
   }
 }
@@ -26,7 +26,7 @@ async function findByEmailAndPassword(email, password) {
   try {
     return await userSchema.findOne({ email, password });
   } catch (err) {
-    logger.err(`UserModel -> findByEmailAndPassword: ${err.message}`);
+    logger.erroror(`UserModel -> findByEmailAndPassword: ${err.message}`);
     throw err;
   }
 }
@@ -43,16 +43,32 @@ async function findByEmailOrUsername(keyword) {
       })
       .select("-password");
   } catch (err) {
-    logger.err(`UserModel -> findByEmailOrUsername: ${err.message}`);
+    logger.erroror(`UserModel -> findByEmailOrUsername: ${err.message}`);
     throw err;
   }
 }
 
-async function deleteAllCollection(params) {
+async function updateUsernameByEmail({email, username}) {
   try {
-    
-  } catch (err) {
-    logger.err(`UserModel -> deleteAllCollection: ${err.message}`);
+    const res = await userSchema.updateOne(
+      {email},
+      {$set: {username}}
+    );
+    return res; 
+  } catch (error) {
+    logger.error(`UserModel -> updateUsernameByEmail: ${err.message}`);
+    throw err;
+  }
+}
+
+async function updatePasswordByEmail({email, password}) {
+  try {
+    return await userSchema.updateOne(
+      {email},
+      {$set: {password}}
+    );
+  } catch (error) {
+    logger.error(`UserModel -> updatePasswordByEmail: ${err.message}`);
     throw err;
   }
 }
@@ -62,4 +78,6 @@ export default {
   findByEmail,
   findByEmailAndPassword,
   findByEmailOrUsername,
+  updateUsernameByEmail,
+  updatePasswordByEmail
 };

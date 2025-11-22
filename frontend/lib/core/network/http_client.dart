@@ -47,7 +47,7 @@ class HttpClient {
     required String id,
   }) async {
     try {
-      final url = '$endpoint$id';
+      final url = '$endpoint/$id';
       final response = await http.delete(Uri.parse(url), headers: _headers);
       final body = _safeDecode(response.body);
 
