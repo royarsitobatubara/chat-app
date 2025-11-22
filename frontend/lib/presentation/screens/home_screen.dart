@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:frontend/core/constants/app_colors.dart';
 import 'package:frontend/presentation/widgets/button_widget.dart';
@@ -18,11 +20,24 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _isSearch = false;
   final List<String> _filters = ['All', 'Unread', 'Groups'];
   final TextEditingController _searchCtrl = TextEditingController();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  final List<Map<String, dynamic>> _drawerButtonList = [
+    {'icons': Icons.person_3_outlined, 'label': 'Account', 'route': '/account'},
+    {'icons': Icons.settings, 'label': 'Setting', 'route': '/settings'},
+    {
+      'icons': Icons.notifications,
+      'label': 'Notification',
+      'route': '/notification',
+    },
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: AppColors.primary,
+      drawer: _drawerModern(),
       body: SafeArea(
         child: Column(
           children: [
@@ -32,9 +47,10 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  // Button Drawer
                   gradientIconButton(
                     icon: Icons.menu_rounded,
-                    onPressed: () {},
+                    onPressed: () => _scaffoldKey.currentState?.openDrawer(),
                   ),
                   gradientIconButton(
                     icon: _isSearch ? Icons.close : Icons.search_rounded,
@@ -304,6 +320,59 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _drawerModern() {
+    return Drawer(
+      elevation: 0,
+      backgroundColor: Colors.transparent,
+      child: ClipRRect(
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Container(
+            padding: const EdgeInsets.only(
+              top: 100,
+              left: 20,
+              right: 20,
+              bottom: 10,
+            ),
+            color: AppColors.blue2.withValues(alpha: .09),
+            child: Column(
+              children: [
+                // PROFILE
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        AppColors.blue2.withValues(alpha: .5),
+                        AppColors.blue3.withValues(alpha: .08),
+                      ],
+                    ),
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: .5),
+                    ),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(shape: BoxShape.circle),
+                        child: Text('A'),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // LIST NAVIGATION
+              ],
+            ),
           ),
         ),
       ),

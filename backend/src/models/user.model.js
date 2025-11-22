@@ -5,9 +5,9 @@ import logger from "../helpers/logger.js";
 async function create({ id, username, email, password }) {
   try {
     return await userSchema.create({ id, username, email, password, photo: null });
-  } catch (error) {
-    logger.error(`UserModel -> createUser: ${error.message}`);
-    throw error;
+  } catch (err) {
+    logger.err(`UserModel -> createUser: ${err.message}`);
+    throw err;
   }
 }
 
@@ -15,9 +15,9 @@ async function create({ id, username, email, password }) {
 async function findByEmail(email) {
   try {
     return await userSchema.findOne({ email });
-  } catch (error) {
-    logger.error(`UserModel -> findByEmail: ${error.message}`);
-    throw error;
+  } catch (err) {
+    logger.err(`UserModel -> findByEmail: ${err.message}`);
+    throw err;
   }
 }
 
@@ -25,9 +25,9 @@ async function findByEmail(email) {
 async function findByEmailAndPassword(email, password) {
   try {
     return await userSchema.findOne({ email, password });
-  } catch (error) {
-    logger.error(`UserModel -> findByEmailAndPassword: ${error.message}`);
-    throw error;
+  } catch (err) {
+    logger.err(`UserModel -> findByEmailAndPassword: ${err.message}`);
+    throw err;
   }
 }
 
@@ -42,9 +42,18 @@ async function findByEmailOrUsername(keyword) {
         ],
       })
       .select("-password");
-  } catch (error) {
-    logger.error(`UserModel -> findByEmailOrUsername: ${error.message}`);
-    throw error;
+  } catch (err) {
+    logger.err(`UserModel -> findByEmailOrUsername: ${err.message}`);
+    throw err;
+  }
+}
+
+async function deleteAllCollection(params) {
+  try {
+    
+  } catch (err) {
+    logger.err(`UserModel -> deleteAllCollection: ${err.message}`);
+    throw err;
   }
 }
 

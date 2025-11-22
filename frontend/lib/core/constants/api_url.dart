@@ -1,5 +1,5 @@
 class ApiUrl {
-  static const String _baseUrl = "http://192.168.100.152:3000/api";
+  static const String _baseUrl = "http://10.10.144.98:3000/api";
 
   // PING SERVER
   static const String ping = '$_baseUrl/ping';

@@ -18,6 +18,7 @@ class AddContactScreen extends StatefulWidget {
 class _AddContactScreenState extends State<AddContactScreen> {
   final TextEditingController _searchCtrl = TextEditingController();
   String? _message;
+  String? _email;
   List<dynamic> _userList = [];
   List<ContactModel> _contactList = [];
 
@@ -71,6 +72,7 @@ class _AddContactScreenState extends State<AddContactScreen> {
     );
     setState(() {
       _contactList = contactFromDB;
+      _email = emailFrom;
     });
   }
 
@@ -272,6 +274,9 @@ class _AddContactScreenState extends State<AddContactScreen> {
                         final isAdded = _contactList.any(
                           (itm) => itm.emailTo == user['email'],
                         );
+                        if (user['email'] == 'a@gmail.com') {
+                          return const SizedBox.shrink();
+                        }
                         return UserItem(
                           username: user['username'],
                           email: user['email'],

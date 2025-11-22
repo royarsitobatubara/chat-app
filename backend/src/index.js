@@ -31,7 +31,7 @@ db();
 
 // ROUTE
 app.get("/api/ping", (req, res) => {
-  logger.info("Ping success");
+  logger.info(`Ping from ${req.ip}`);
   return ResponseHelper.success({
     res,
     status: 200,
