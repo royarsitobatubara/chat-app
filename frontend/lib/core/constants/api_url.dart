@@ -1,5 +1,5 @@
 class ApiUrl {
-  static const String _baseUrl = "http://10.10.144.98:3000/api";
+  static const String _baseUrl = "http://192.168.0.107:3000/api";
 
   // PING SERVER
   static const String ping = '$_baseUrl/ping';
@@ -7,6 +7,7 @@ class ApiUrl {
   // USER
   static const String signIn = '$_baseUrl/user/signin';
   static const String signUp = '$_baseUrl/user/signup';
+  static const String updateUsername = '$_baseUrl/user/update/username';
   static const String getUserByKeyword = '$_baseUrl/user/search?user=';
 
   // CONTACT

@@ -55,4 +55,25 @@ class UserDbService {
       rethrow;
     }
   }
+
+  static Future<bool> updateUsername({
+    required String email,
+    required String username,
+  }) async {
+    try {
+      final db = await DBHelper().database;
+
+      final result = await db.update(
+        table,
+        {'username': username},
+        where: 'email = ?',
+        whereArgs: [email],
+      );
+
+      return result > 0; 
+    } catch (e) {
+      AppLogger.error('Error in UserDbService -> updateUsername: $e');
+      rethrow;
+    }
+  }
 }

@@ -100,4 +100,35 @@ class HttpClient {
       );
     }
   }
+
+  Future<ApiResponse> update({
+    required String endpoint,
+    required Map<String, dynamic> data,
+  }) async {
+    try {
+      final response = await http.put(
+        Uri.parse(endpoint),
+        headers: _headers,
+        body: jsonEncode(data),
+      );
+
+      final body = _safeDecode(response.body);
+
+      if (body['success'] == true) {
+        return ApiResponse.fromJson(body);
+      }
+
+      return ApiResponse(
+        success: false,
+        message: body['message']?.toString() ?? 'Request failed',
+        error: body['error']?.toString(),
+      );
+    } catch (e) {
+      return ApiResponse(
+        success: false,
+        message: 'Failed to connect',
+        error: e.toString(),
+      );
+    }
+  }
 }

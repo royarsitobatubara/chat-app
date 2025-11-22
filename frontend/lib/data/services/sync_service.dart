@@ -1,8 +1,10 @@
 import 'package:frontend/data/databases/pending_actions_db.dart';
 import 'package:frontend/data/services/contact_service.dart';
+import 'package:frontend/data/services/user_service.dart';
 
 class SyncService {
   static final _contactService = ContactService();
+  static final _userService = UserService();
 
   static Future<void> syncPending() async {
     final pending = await PendingActionsDb.getAll();
@@ -16,33 +18,31 @@ class SyncService {
       try {
         // DELETE CONTACT
         if (type == 'delete_contact') {
-          final res = await _contactService.deleteContactById(id: payload['id']);
-
-          // anggap sukses kalau:
-          // - res.success == true
-          // - atau server bilang contact tidak ada
+          final res = await _contactService.deleteContactById(
+            id: payload['id'],
+          );
           if (res.success == true || res.message == 'Contact does not exist') {
             success = true;
           }
         }
-
         // ADD CONTACT
         else if (type == 'add_contact') {
           final res = await _contactService.addContact(
             emailFrom: payload['email_from'],
             emailTo: payload['email_to'],
           );
-
-          // anggap sukses kalau server bilang:
-          // - success == true
-          // - atau "Contact already exists"
           if (res.success == true || res.message == 'Contact already exists') {
             success = true;
           }
+        } else if (type == 'update_username') {
+          final res = await _userService.updateUsername(
+            email: payload['username'],
+            username: payload['username'],
+          );
+          if (res.success == true) {
+            success = true;
+          }
         }
-
-        // UPDATE dan lain-lain bisa ditambah di sini
-
       } catch (_) {
         // Error jaringan → jangan hapus pending
         success = false;

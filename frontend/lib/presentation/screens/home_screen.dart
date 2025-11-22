@@ -23,10 +23,10 @@ class _HomeScreenState extends State<HomeScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   final List<Map<String, dynamic>> _drawerButtonList = [
-    {'icons': Icons.person_3_outlined, 'label': 'Account', 'route': '/account'},
-    {'icons': Icons.settings, 'label': 'Setting', 'route': '/settings'},
+    {'icon': Icons.person_3_outlined, 'label': 'Account', 'route': '/account'},
+    {'icon': Icons.settings, 'label': 'Setting', 'route': '/settings'},
     {
-      'icons': Icons.notifications,
+      'icon': Icons.notifications,
       'label': 'Notification',
       'route': '/notification',
     },
@@ -362,15 +362,96 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   child: Row(
                     children: [
+                      // PHOTO PROFILE
                       Container(
-                        decoration: BoxDecoration(shape: BoxShape.circle),
-                        child: Text('A'),
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: AppColors.blue2,
+                        ),
+                        child: Text(
+                          'A',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 30,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'User',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          ),
+                          Text(
+                            'someone@example.com',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w400,
+                              fontSize: 10,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
                 ),
 
                 // LIST NAVIGATION
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: _drawerButtonList.length,
+                    itemBuilder: (context, index) {
+                      final itm = _drawerButtonList[index];
+                      return GestureDetector(
+                        onTap: () => context.push(itm['route']),
+                        child: Container(
+                          margin: const EdgeInsets.only(bottom: 10),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 12,
+                          ),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(
+                              color: Colors.white.withValues(alpha: .05),
+                              width: 2,
+                            ),
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                AppColors.blue1.withValues(alpha: .5),
+                                AppColors.blue3.withValues(alpha: .5),
+                              ],
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(itm['icon'], color: Colors.white, size: 25),
+                              const SizedBox(width: 10),
+                              Text(
+                                itm['label'],
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 17,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
               ],
             ),
           ),
