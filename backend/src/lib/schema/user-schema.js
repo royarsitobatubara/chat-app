@@ -2,11 +2,10 @@ import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
   {
-    username: String,
-    email: String,
-    password: String,
-    photo: String,
-    token: String
+    username  : String,
+    email     : String,
+    password  : String,
+    token     : String
   },
   {
     toJSON: {

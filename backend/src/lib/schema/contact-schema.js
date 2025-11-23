@@ -2,8 +2,8 @@ import mongoose from "mongoose";
 
 const contactSchema = new mongoose.Schema(
     {
-        email_from: String,
-        email_to: String
+        email_sender: String,
+        email_receiver: String
     },
     {
         toJSON: {
