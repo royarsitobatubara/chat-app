@@ -10,21 +10,26 @@ import token from "../helpers/generate-token.js";
  * @param {String} password
  */
 const signUp = async ({ username, email, password }) => {
+  // mengecek di database apakah email babi ni udah di gunakan apa tidak
   const exists = await model.findByEmail({ email });
+  // jika ada, maka tampilkan error
   if (exists) {
     throw new AppError("Email already used", 409);
   }
 
+  // hashing password dulu
   const hashPassword = await bcrypt.hash(password, 10);
 
   let res;
   try {
+    // coba masukan ke database
     res = await model.insert({
       username,
       email,
       password: hashPassword,
     });
   } catch (err) {
+    // jika gagal memasukan data maka tampilkan error
     throw new AppError("Failed to create user", 500);
   }
 
@@ -37,16 +42,21 @@ const signUp = async ({ username, email, password }) => {
  * @param {String} password
  */
 const signIn = async ({ email, password }) => {
+  // mengambil data user dari database
   const user = await model.findByEmail({ email });
+  // jika tidak ada, maka tampilkan error
   if (!user) {
     throw new AppError("Email not found", 404);
   }
-
+  // jika ada, maka mencoba mencocokan password 
   const match = await bcrypt.compare(password, user.password);
+  // jika tidak sama, maka tampilkan kalo password itu salah
   if (!match) {
     throw new AppError("Password is wrong", 400);
   }
+  // buat payload untuk token
   const payload = {id: user.id, email: user.email};
+  // kembalikan data user dan token jika berhasil
   return {
     id: user.id,
     email: user.email,
@@ -60,10 +70,13 @@ const signIn = async ({ email, password }) => {
  * GET ALL USER
  */
 const getAllUser = async () => {
+  // mencoba mengambil data user
   const user = await model.findAll();
+  // jika tidak ada, maka tampilkan error kalo user tidak ada
   if(user.length === 0){
     throw new AppError("User is empty", 404);
   }
+  // jika ada maka tampilkan array berisi data user
   return user;
 }
 
@@ -72,10 +85,13 @@ const getAllUser = async () => {
  * @param {String} keyword 
  */
 const searchUser = async (keyword) => {
+  // mencoba mengambil data user yang huruf nya sama
   const user = await model.findByKeyword(keyword);
+  // jika tidak ada, maka tampilkan error kalo user tidak ada
   if(!user || user.length === 0){
     throw new AppError('User not found', 404);
   }
+  // kembalikan data jika data ada
   return user;
 }
 
