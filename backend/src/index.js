@@ -5,6 +5,7 @@ import { createServer } from "http";
 import { Server } from "socket.io";
 import database from "./lib/database.js";
 import userRoute from "./routes/user-route.js";
+import contactRoute from "./routes/contact-route.js";
 
 
 // ENV
@@ -27,6 +28,7 @@ database();
 
 // ROUTE
 app.use('/api', userRoute);
+app.use('/api', contactRoute);
 
 // SOCKET IO
 

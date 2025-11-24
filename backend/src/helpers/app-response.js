@@ -14,7 +14,7 @@ class AppResponse {
             statusCode,
             message,
             data,
-            timeStemp: new Date().toISOString()
+            timestamp: new Date().toISOString()
         })
     }
 
@@ -30,7 +30,7 @@ class AppResponse {
             statusCode,
             message,
             error,
-            timeStemp: new Date().toISOString()
+            timestamp: new Date().toISOString()
         })
     }
 }
