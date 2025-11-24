@@ -55,6 +55,18 @@ const signIn = async ({ email, password }) => {
   };
 };
 
+
+/**
+ * GET ALL USER
+ */
+const getAllUser = async () => {
+  const user = await model.findAll();
+  if(user.length === 0){
+    throw new AppError("User is empty", 404);
+  }
+  return user;
+}
+
 /**
  * SEARCH USER
  * @param {String} keyword 
@@ -68,7 +80,7 @@ const searchUser = async (keyword) => {
 }
 
 /**
- * 
+ * UPDATE USERNAME
  * @param {String} email 
  * @param {String} password 
  */
@@ -81,7 +93,7 @@ const updateUsername = async ({ email, username }) => {
 }
 
 /**
- * 
+ * UPDATE PASSWORD
  * @param {String} email 
  * @param {String} passwordOld 
  * @param {String} passwordNew
@@ -103,10 +115,28 @@ const updatePassword = async ({ email, passwordOld, passwordNew }) => {
   return updated;
 }
 
+/**
+ * DELETE USER BY ID
+ * @param {String} id 
+ */
+const deleteUserById = async ({id}) => {
+  const user = await model.findById({id});
+  if (!user){
+    throw new AppError("User not found", 404);
+  }
+  const res = await model.deleteById({id: user.id});
+  if(res.deletedCount === 0){
+    throw new AppError("Delete user failed", 500);
+  }
+  return res;
+}
+
 export default {
   signUp,
   signIn,
   searchUser,
+  getAllUser,
   updateUsername,
-  updatePassword
+  updatePassword,
+  deleteUserById
 };

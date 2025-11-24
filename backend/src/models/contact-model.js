@@ -22,7 +22,15 @@ const findAll = async () => {
  * @param {String} sender 
  */
 const findByEmailSender = async ({ sender }) => {
-    return schema.find({ emailSender: sender });
+    return schema.find({ emailSender: sender }) || [];
+}
+
+/**
+ * 
+ * @param {String} receiver 
+ */
+const findByEmailReceiver = async ({ receiver }) => {
+    return schema.find({ emailReceiver: receiver }) || [];
 }
 
 /**
@@ -31,7 +39,7 @@ const findByEmailSender = async ({ sender }) => {
  * @param {String} receiver 
  */
 const findByEmailSenderAndReceiver = async ({ sender, receiver }) => {
-    return schema.findOne({ emailSender: sender, emailReceiver: receiver });
+    return schema.findOne({ emailSender: sender, emailReceiver: receiver }) || {};
 }
 
 /**
@@ -54,6 +62,7 @@ export default {
     insert,
     findAll,
     findByEmailSender,
+    findByEmailReceiver,
     findByEmailSenderAndReceiver,
     findById,
     deleteById

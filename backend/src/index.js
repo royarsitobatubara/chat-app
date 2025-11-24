@@ -6,6 +6,7 @@ import { Server } from "socket.io";
 import database from "./lib/database.js";
 import userRoute from "./routes/user-route.js";
 import contactRoute from "./routes/contact-route.js";
+import socketHandler from "./sockets/index-socket.js";
 
 
 // ENV
@@ -20,6 +21,7 @@ app.use(express.urlencoded({ extended: true }));
 const io = new Server(httpServer, {
   cors: {
     origin: "*",
+    credentials: true
   },
 });
 
@@ -30,7 +32,8 @@ database();
 app.use('/api', userRoute);
 app.use('/api', contactRoute);
 
-// SOCKET IO
+// SOCKET HANDLER
+socketHandler(io);
 
 // PORT
 const PORT = process.env.PORT || 3000;

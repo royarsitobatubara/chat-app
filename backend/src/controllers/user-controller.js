@@ -16,6 +16,7 @@ const signIn = async (req, res, next) => {
     }
   try {
     const data = await service.signIn({ email, password });
+    logger.info(`${email} success to sign in`);
     return AppResponse.success({
         res,
         statusCode: 200,
@@ -23,7 +24,7 @@ const signIn = async (req, res, next) => {
         data
     })
   } catch (error) {
-    logger.error(error);
+    logger.error(`signIn: ${error}`);
     return AppResponse.failed({
         res,
         status: error.statusCode,
@@ -46,6 +47,7 @@ const signUp = async (req, res, next) => {
     }
   try {
     const data = await service.signUp({ username, email, password });
+    logger.info(`${email} success to sign up`);
     return AppResponse.success({
         res,
         status: 201,
@@ -53,7 +55,7 @@ const signUp = async (req, res, next) => {
         data: data
     });
   } catch (error) {
-    logger.error(error);
+    logger.error(`signUp: ${error}`);
     return AppResponse.failed({
         res,
         status: error.statusCode,
@@ -77,6 +79,7 @@ const searchUser = async (req, res, next) => {
     }
     try {
         const data = await service.searchUser(keyword);
+        logger.info(`Search user success`);
         return AppResponse.success({
             res,
             status: 200,
@@ -84,12 +87,35 @@ const searchUser = async (req, res, next) => {
             data: data
         });
     } catch (error) {
-        logger.error(error);
+        logger.error(`searchUser: ${error}`);
         return AppResponse.failed({
             res,
             status: error.statusCode,
             message: error.message,
         });
+    }
+}
+
+/**
+ * GET ALL USER 
+ */
+const getAllUser = async (req, res, next) => {
+    try {
+        const data = await service.getAllUser();
+        logger.info(`Get all user success`);
+        return AppResponse.success({
+            res,
+            status: 200,
+            message: 'Update username success',
+            data: data
+        });
+    } catch (error) {
+        logger.error(`getAllUser: ${error}`);
+        return AppResponse.failed({
+            res,
+            status: error.statusCode,
+            message: error.message,
+        }); 
     }
 }
 
@@ -107,6 +133,7 @@ const updateUsername = async (req, res, next) => {
     }
     try {
         const data = await service.updateUsername({email, username});
+        logger.info(`Update username success`);
         return AppResponse.success({
             res,
             status: 200,
@@ -114,7 +141,7 @@ const updateUsername = async (req, res, next) => {
             data: data
         });
     } catch (error) {
-        logger.error(error);
+        logger.error(`updateUsername: ${error}`);
         return AppResponse.failed({
             res,
             status: error.statusCode,
@@ -137,6 +164,7 @@ const updatePassword = async (req, res, next) => {
     }
     try {
         const data = await service.updatePassword({email, passwordOld, passwordNew});
+        logger.info(`Update password success`);
         return AppResponse.success({
             res,
             status: 200,
@@ -144,7 +172,39 @@ const updatePassword = async (req, res, next) => {
             data: data
         });
     } catch (error) {
-        logger.error(error);
+        logger.error(`updatePassword: ${error}`);
+        return AppResponse.failed({
+            res,
+            status: error.statusCode,
+            message: error.message,
+        });
+    }
+}
+
+/**
+ * DELETE USER BY ID
+ */
+const deleteUserById = async(req, res, next) => {
+    const {id} = req.params;
+    if(!id){
+        logger.warn('ID is required');
+        return AppResponse.failed({
+            res,
+            status: 400,
+            message: 'id cannot be empty',
+        });
+    }
+    try {
+        const data = await service.deleteUserById({id});
+        logger.info(`Delete user success`);
+        return AppResponse.success({
+            res,
+            status: 200,
+            message: 'Delete user success',
+            data: data
+        });
+    } catch (error) {
+        logger.error(`deleteUserById: ${error}`);
         return AppResponse.failed({
             res,
             status: error.statusCode,
@@ -157,6 +217,8 @@ export default {
   signIn,
   signUp,
   searchUser,
+  getAllUser,
   updateUsername,
-  updatePassword
+  updatePassword,
+  deleteUserById
 };

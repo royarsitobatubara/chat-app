@@ -56,6 +56,18 @@ const getContactBySender = async ({ sender })  => {
 
 /**
  * 
+ * @param {String} receiver 
+ */
+const getContactByReceiver = async ({ receiver })  => {
+    const contacts = await modelContact.findByEmailReceiver({receiver});
+    if(contacts.length === 0){
+        throw new AppError("Contact is empty", 404);
+    }
+    return contacts;
+}
+
+/**
+ * 
  * @param {String} id 
  */
 const deleteContactById = async ({ id }) => {
@@ -74,5 +86,6 @@ export default {
     addContact,
     getAllContacts,
     deleteContactById,
-    getContactBySender
+    getContactBySender,
+    getContactByReceiver
 }
