@@ -16,7 +16,7 @@ async function userSocket(io, socket) {
     /**
      * UPDATE USERNAME
      */
-    socket.on("user:update:username", async(data)=> {
+    socket.on("user:update-username", async(data)=> {
         const {email, newUsername} = data;
         try {
             await userService.updateUsername({email, username: newUsername});
@@ -37,10 +37,11 @@ async function userSocket(io, socket) {
         }
     });
 
+
     /**
      * JOIN USER / ONLINE
      */
-    socket.on("user:join", async (email) => {
+    socket.on("user:online", async (email) => {
         if (!email) return;
         try {
             onlineUsers.set(email, socket.id);
