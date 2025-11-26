@@ -2,23 +2,14 @@ import mongoose from "mongoose";
 
 const messageSchema = new mongoose.Schema(
     {
-        message : String,
-        sender  : String,
-        receiver: String,
-        type    : String,
-        isRead  : Boolean,
-        time    : String,
+        id           : String,
+        message      : String,
+        emailSender  : String,
+        emailReceiver: String,
+        type         : {type: String, default: "text"},
+        status       : {type: String, default: "sent"}, //pending, sent, delivered, read
+        time         : String,
     },
-    {
-        toJSON: {
-            virtuals: true,
-            versionKey: true,
-            transform(doc, ret){
-                ret.id = ret._id;
-                delete ret._id;
-            }
-        }
-    }
 );
 
 export default mongoose.model("Messages", messageSchema);

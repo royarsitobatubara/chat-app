@@ -37,7 +37,7 @@ const signIn = async (req, res, next) => {
  * SIGN UP
  */
 const signUp = async (req, res, next) => {
-    const {username, email, password} = req.body;
+    const {username, email, password, role} = req.body;
     if (!username || !email || !password){
         return AppResponse.failed({
             res,
@@ -46,13 +46,13 @@ const signUp = async (req, res, next) => {
         });
     }
   try {
-    const data = await service.signUp({ username, email, password });
+    const data = await service.signUp({ username, email, password, role:role||"user" });
     logger.info(`${email} success to sign up`);
     return AppResponse.success({
         res,
         status: 201,
         message: 'Sign up is success',
-        data: data
+        data: data,
     });
   } catch (error) {
     logger.error(`signUp: ${error}`);

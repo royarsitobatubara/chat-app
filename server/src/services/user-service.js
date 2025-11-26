@@ -9,7 +9,7 @@ import token from "../helpers/generate-token.js";
  * @param {String} email
  * @param {String} password
  */
-const signUp = async ({ username, email, password }) => {
+const signUp = async ({ username, email, password, role }) => {
   // mengecek di database apakah email babi ni udah di gunakan apa tidak
   const exists = await model.findByEmail({ email });
   // jika ada, maka tampilkan error
@@ -27,6 +27,7 @@ const signUp = async ({ username, email, password }) => {
       username,
       email,
       password: hashPassword,
+      role
     });
   } catch (err) {
     // jika gagal memasukan data maka tampilkan error

@@ -4,7 +4,7 @@ make mini chat application
 
 ## 🚀 Tech Stack
 
-### 📱 Frontend
+### 📱 APPLICATION
 
 - Flutter
 - Provider
@@ -14,7 +14,7 @@ make mini chat application
 - Shared preferences
 - path
 
-### 📡 Backend
+### 📡 SERVER
 
 - Express js
 - Socket.io
@@ -39,8 +39,9 @@ make mini chat application
 
 ```pgsql
     chat-app/
-    ├── backend/   # Express JS
-    └── frontend/  # Flutter project
+    ├── app/   # Express JS
+    ├── server/  # Flutter dart
+    └── web / # React js
 ```
 
 ## 🛠️ How to install
@@ -51,10 +52,14 @@ make mini chat application
     cd chat-app
 
     # frontend
-    cd frontend
+    cd app
     flutter pub get
 
+    # server (in separate terminal)
+    cd ../server
+    npm install
+
     # backend (in separate terminal)
-    cd ../backend
+    cd ../web
     npm install
 ```

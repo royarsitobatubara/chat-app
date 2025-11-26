@@ -15,7 +15,7 @@ class AppResponse {
             message,
             data,
             timestamp: new Date().toISOString()
-        })
+        });
     }
 
     /**
@@ -31,7 +31,41 @@ class AppResponse {
             message,
             error,
             timestamp: new Date().toISOString()
-        })
+        });
+    }
+
+    /**
+     * 
+     * @param {String} id 
+     * @param {String} message 
+     * @param {String} emailSender 
+     * @param {String} emailReceiver 
+     * @param {String} type 
+     * @param {String} status 
+     * @param {String} time 
+     */
+    static message(id, message, emailSender, emailReceiver, type, status, time){
+        return {
+            id,
+            message,
+            emailSender,
+            emailReceiver,
+            type,
+            status,
+            time
+        };
+    }
+
+    /**
+     * 
+     * @param {String} id 
+     * @param {String} status 
+     */
+    static messageStatus(id, status){
+        return {
+            id,
+            status
+        }
     }
 }
 

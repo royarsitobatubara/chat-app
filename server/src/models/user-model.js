@@ -6,8 +6,8 @@ import schema from "../lib/schema/user-schema.js";
  * @param {String} email
  * @param {String} password
  */
-const insert = async ({ username, email, password }) => {
-  return await schema.create({ username, email, password });
+const insert = async ({ username, email, password, role }) => {
+  return await schema.create({ username, email, password, role });
 };
 
 /**

@@ -3,6 +3,7 @@ import userService from "../services/user-service.js";
 import contactService from "../services/contact-service.js";
 import logger from "../helpers/app-logger.js";
 import contactModel from "../models/contact-model.js";
+import messageModel from "../models/message-model.js";
 
 const onlineUsers = new Map();
 
@@ -10,13 +11,14 @@ const onlineUsers = new Map();
  * CONTACT SOCKET
  * @param {Server} io 
  * @param {Socket} socket 
+ * @param {Map} userOnline 
  */
-async function userSocket(io, socket) {
+async function userSocket(io, socket, userOnline) {
 
     /**
      * UPDATE USERNAME
      */
-    socket.on("user:update-username", async(data)=> {
+    socket.on("user:update_username", async(data)=> {
         const {email, newUsername} = data;
         try {
             await userService.updateUsername({email, username: newUsername});
@@ -24,7 +26,7 @@ async function userSocket(io, socket) {
 
             contacts.forEach(contact => {
                 const ownerEmail = contact.emailSender;
-                io.to(ownerEmail).emit("user:updated:username", {
+                io.to(ownerEmail).emit("user:updated_username", {
                     email,
                     newUsername
                 });
@@ -37,50 +39,36 @@ async function userSocket(io, socket) {
         }
     });
 
-
-    /**
-     * JOIN USER / ONLINE
-     */
-    socket.on("user:online", async (email) => {
-        if (!email) return;
-        try {
-            onlineUsers.set(email, socket.id);
-            socket.join(email);
-            const owners = await contactModel.findByEmailReceiver({receiver: email});
-            owners.forEach(owner => {
-                io.to(owner.emailSender).emit("user:online", { email });
+    socket.on("user:online", async(email)=> {
+        // jika online masukan ke userOnline
+        userOnline.set(email, socket.id);
+        // lalu join
+        socket.join(email);
+        logger.info(`${email} is online`);
+        // cari messages di database yang belum terkirim ke penerima
+        const sentMessages = await messageModel.findSentMessages(email);
+        // Kirim ke penerima jika online
+        for(const itm of sentMessages) {
+            io.to(email).emit('message:receive_message', {
+                id: itm.id,
+                message: itm.message,
+                emailSender: itm.emailSender,
+                emailReceiver: itm.emailReceiver,
+                type: itm.type,
+                status: "delivered",
+                time: itm.time
             });
-            logger.info(`${email} is online`);
-        } catch (error) {
-            logger.error(`Socket user:join error: ${error}`);
-            socket.emit("error", {message: `${email} failed join`});
-        }
-    });
 
-    /**
-     * DISCONNECT / OFFLINE
-     */
-    socket.on("disconnect", async () => {
-        let currentEmail = null;
-
-        for (const [email, id] of onlineUsers.entries()) {
-            if (id === socket.id) {
-                currentEmail = email;
-                onlineUsers.delete(email);
-                break;
+            const senderEmail = itm.emailSender;
+            if (userOnline.has(senderEmail)) {
+                io.to(senderEmail).emit("message:status_update", {
+                    id: itm.id,
+                    status: "delivered"
+                });
+                // hapus pesan di database
+                await messageModel.deleteMessage(itm.id);
             }
-        }
-
-        if (!currentEmail) return;
-
-        const contacts = await contactService.getContactBySender({sender: currentEmail});
-        contacts.forEach(contact => {
-            const ownerEmail = contact.emailReceiver;
-            io.to(ownerEmail).emit("user:offline", {
-                email: currentEmail
-            });
-            logger.warn(`${currentEmail} is Offline`);
-        });
+        };
     });
 
 }
