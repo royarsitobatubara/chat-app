@@ -44,6 +44,7 @@ class _SignupScreenState extends State<SignupScreen> {
           _msg = data.message;
         });
 
+        // ignore: always_specify_types
         await Future.delayed(const Duration(seconds: 1));
 
         if (!mounted) return;
@@ -63,6 +64,7 @@ class _SignupScreenState extends State<SignupScreen> {
       });
     }
   }
+
   @override
   void dispose() {
     _usernameCtrl.dispose();

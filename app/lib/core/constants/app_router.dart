@@ -1,3 +1,4 @@
+import 'package:app/presentation/screens/add_contact_screen.dart';
 import 'package:app/presentation/screens/home_screen.dart';
 import 'package:app/presentation/screens/signin_screen.dart';
 import 'package:app/presentation/screens/signup_screen.dart';
@@ -22,6 +23,11 @@ class AppRouter {
         path: '/home',
         builder: (BuildContext context, GoRouterState state) =>
             const HomeScreen(),
+      ),
+      GoRoute(
+        path: '/add-contact',
+        builder: (BuildContext context, GoRouterState state) =>
+            const AddContactScreen(),
       ),
     ],
   );
