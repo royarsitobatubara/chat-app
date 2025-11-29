@@ -1,3 +1,4 @@
+import 'package:app/core/constants/app_color.dart';
 import 'package:app/core/constants/app_router.dart';
 import 'package:flutter/material.dart';
 
@@ -12,6 +13,7 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       title: 'Chat-app',
+      color: AppColor.primary,
       debugShowCheckedModeBanner: false,
       routerConfig: AppRouter.router,
     );

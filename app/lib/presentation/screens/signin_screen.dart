@@ -8,18 +8,19 @@ import 'package:app/presentation/widgets/textfields/password_field.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class SigninScreen extends StatefulWidget {
+  const SigninScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<SigninScreen> createState() => _SigninScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _SigninScreenState extends State<SigninScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _emailCtrl = TextEditingController();
   final TextEditingController _passCtrl = TextEditingController();
   String? _msg;
+  bool _isError = true;
   bool _isLoading = false;
 
   Future<void> _submitHandle() async {
@@ -36,6 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (data.success == true) {
         setState(() {
+          _isError = false;
           _msg = data.message;
         });
 
@@ -57,6 +59,13 @@ class _LoginScreenState extends State<LoginScreen> {
         _isLoading = false;
       });
     }
+  }
+
+  @override
+  void dispose() {
+    _emailCtrl.dispose();
+    _passCtrl.dispose();
+    super.dispose();
   }
 
   @override
@@ -96,7 +105,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                 ),
-                if (_msg != null) MessageAlert(isError: true, message: _msg!),
+                if (_msg != null)
+                  MessageAlert(isError: _isError, message: _msg!),
                 const SizedBox(height: 20),
                 SubmitButton(
                   loading: _isLoading,

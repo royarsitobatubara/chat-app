@@ -18,3 +18,24 @@ Future<ApiResponse> signIn({
     return ApiResponse(success: false, statusCode: 500, message: e.toString());
   }
 }
+
+Future<ApiResponse> signUp({
+  required String username,
+  required String email,
+  required String password,
+}) async {
+  try {
+    final ApiResponse res = await HttpClient().post(
+      endpoint: AppEndpoint.signUp,
+      body: <String, String>{
+        'username': username,
+        'email': email,
+        'password': password,
+      },
+    );
+    return res;
+  } catch (e) {
+    Logger.error('SIGNUP: $e');
+    return ApiResponse(success: false, statusCode: 500, message: e.toString());
+  }
+}
