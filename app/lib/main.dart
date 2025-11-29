@@ -13,7 +13,7 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       title: 'Chat-app',
-      color: AppColor.primary,
+      color: AppColor.white,
       debugShowCheckedModeBanner: false,
       routerConfig: AppRouter.router,
     );
