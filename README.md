@@ -41,7 +41,7 @@ make mini chat application
     chat-app/
     ├── app/   # Express JS
     ├── server/  # Flutter dart
-    └── web / # React js
+    └── admin / # React js
 ```
 
 ## 🛠️ How to install
@@ -51,7 +51,7 @@ make mini chat application
     git clone https://github.com/royarsitobatubara/chat-app.git
     cd chat-app
 
-    # frontend
+    # application
     cd app
     flutter pub get
 
@@ -59,7 +59,7 @@ make mini chat application
     cd ../server
     npm install
 
-    # backend (in separate terminal)
-    cd ../web
+    # dashboard (in separate terminal)
+    cd ../dashboard
     npm install
 ```
