@@ -1,1 +1,27 @@
-class ContactModel {}
+class ContactModel {
+  final String? id;
+  final String emailSender;
+  final String emailReceiver;
+
+  const ContactModel({
+    this.id,
+    required this.emailSender,
+    required this.emailReceiver,
+  });
+
+  factory ContactModel.fromJson(Map<String, dynamic> json) {
+    return ContactModel(
+      id: json['id']?.toString(),
+      emailSender: json['emailSender'],
+      emailReceiver: json['emailReceiver'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'emailSender': emailSender,
+      'emailReceiver': emailReceiver,
+    };
+  }
+}
