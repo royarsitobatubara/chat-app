@@ -1,4 +1,5 @@
 import 'package:app/core/constants/app_color.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 class SubmitButton extends StatelessWidget {
@@ -33,7 +34,16 @@ class SubmitButton extends StatelessWidget {
           backgroundColor: Colors.transparent,
           shadowColor: Colors.transparent,
         ),
-        child: loading ? const CircularProgressIndicator() : Text(text),
+        child: loading
+            ? const CircularProgressIndicator()
+            : Text(
+                text.tr(),
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 17,
+                  color: AppColor.primary,
+                ),
+              ),
       ),
     );
   }

@@ -1,11 +1,28 @@
 import 'package:app/core/constants/app_color.dart';
 import 'package:app/presentation/widgets/buttons/icon_custom_button.dart';
 import 'package:app/presentation/widgets/buttons/new_message_button.dart';
+import 'package:app/presentation/widgets/textfields/search_field.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final TextEditingController _searchCtrl = TextEditingController();
+  final int _msgCount = 10;
+  bool _isSearch = false;
+
+  @override
+  void dispose() {
+    _searchCtrl.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,28 +43,45 @@ class HomeScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <IconCustomButton>[
                   IconCustomButton(icon: Icons.menu, handle: () {}),
-                  IconCustomButton(icon: Icons.search, handle: () {}),
+                  IconCustomButton(
+                    icon: _isSearch ? Icons.close : Icons.search,
+                    handle: () => setState(() => _isSearch = !_isSearch),
+                  ),
                 ],
               ),
 
               const SizedBox(height: 30),
+              
+              // SEARCH FIELD
+              AnimatedSize(
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeOut,
+                child: _isSearch
+                    ? Column(
+                        children: <Widget>[
+                          SearchField(controller: _searchCtrl),
+                          const SizedBox(height: 20),
+                        ],
+                      )
+                    : const SizedBox.shrink(),
+              ),
 
               // INBOX AND COUNT MESSAGE
-              const Row(
+              Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Text(
-                    "Inbox",
-                    style: TextStyle(
+                    "inbox".tr(),
+                    style: const TextStyle(
                       color: AppColor.white,
                       fontWeight: FontWeight.bold,
                       fontSize: 40,
                     ),
                   ),
-                  SizedBox(width: 20),
+                  const SizedBox(width: 20),
                   Text(
-                    "(10 messages)",
-                    style: TextStyle(
+                    "($_msgCount ${"messages".tr()})",
+                    style: const TextStyle(
                       color: AppColor.white,
                       fontWeight: FontWeight.w400,
                       fontSize: 15,

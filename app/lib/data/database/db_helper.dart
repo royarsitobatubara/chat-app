@@ -26,10 +26,18 @@ class DBHelper {
 
   Future<void> _onCreate(Database db, int version) async {
     await db.execute('''
-      CREATE TABLE items(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT,
-        quantity INTEGER
+      CREATE TABLE users(
+        id TEXT PRIMARY KEY,
+        username TEXT,
+        EMAIL TEXT
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE contacts(
+        id TEXT PRIMARY KEY,
+        email_sender TEXT,
+        email_receiver TEXT
       )
     ''');
   }

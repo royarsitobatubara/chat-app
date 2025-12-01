@@ -26,8 +26,26 @@ class AppRouter {
       ),
       GoRoute(
         path: '/add-contact',
-        builder: (BuildContext context, GoRouterState state) =>
-            const AddContactScreen(),
+        pageBuilder: (BuildContext context, GoRouterState state) {
+          return CustomTransitionPage(
+            key: state.pageKey,
+            child: const AddContactScreen(),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  const Offset begin = Offset(1.0, 0.0);
+                  const Offset end = Offset.zero;
+                  final tween = Tween(
+                    begin: begin,
+                    end: end,
+                  ).chain(CurveTween(curve: Curves.easeOut));
+
+                  return SlideTransition(
+                    position: animation.drive(tween),
+                    child: child,
+                  );
+                },
+          );
+        },
       ),
     ],
   );

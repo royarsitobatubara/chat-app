@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 class MessageAlert extends StatelessWidget {
@@ -29,7 +30,7 @@ class MessageAlert extends StatelessWidget {
           ),
           const SizedBox(width: 10),
           Text(
-            message,
+            message.tr(),
             style: const TextStyle(
               color: Colors.white,
               fontSize: 15,

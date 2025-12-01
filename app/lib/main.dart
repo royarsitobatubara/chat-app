@@ -28,7 +28,6 @@ void main() async {
 //   child: const Text("Ganti ke Indonesia"),
 // );
 
-
 class MainApp extends StatelessWidget {
   const MainApp({super.key});
 
@@ -39,7 +38,7 @@ class MainApp extends StatelessWidget {
       supportedLocales: context.supportedLocales,
       localizationsDelegates: context.localizationDelegates,
       title: 'Chat-app',
-      color: AppColor.white,
+      color: AppColor.primary,
       debugShowCheckedModeBanner: false,
       routerConfig: AppRouter.router,
     );

@@ -1,0 +1,13 @@
+{
+    "add_contact": "Add Contact",
+    "enter_email_or_id_person": "Enter email or id person",
+    "enter_name": "Enter name",
+    "failed_saving_user": "Failed saving user",
+    "inbox": "Inbox",
+    "messages": "Messages",
+    "new_message": "New Message",
+    "search_here": "Search here...",
+    "type_here": "Type here...",
+    "user_is_found": "User is found",
+    "user_not_found": "User is not found"
+}
