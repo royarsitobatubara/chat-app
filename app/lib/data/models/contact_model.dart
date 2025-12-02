@@ -17,9 +17,9 @@ class ContactModel {
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
+  Map<String, String> toJson() {
+    return <String, String>{
+      'id': id as String,
       'emailSender': emailSender,
       'emailReceiver': emailReceiver,
     };
