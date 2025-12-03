@@ -1,8 +1,9 @@
+
+
 import 'package:app/core/constants/app_endpoint.dart';
 import 'package:app/core/helper/api_response.dart';
 import 'package:app/core/helper/http_client.dart';
 import 'package:app/core/helper/logger.dart';
-// import 'package:app/data/models/user_model.dart';
 
 Future<ApiResponse> searchUser(String keyword) async {
   try {
@@ -15,3 +16,4 @@ Future<ApiResponse> searchUser(String keyword) async {
     return ApiResponse(success: false, statusCode: 500, message: e.toString());
   }
 }
+

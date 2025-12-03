@@ -79,6 +79,7 @@ class _AddContactScreenState extends State<AddContactScreen> {
   }
 
   Future<void> _clearMsg() async {
+    // ignore: always_specify_types
     await Future.delayed(const Duration(seconds: 2));
     setState(() {
       _msg = "";

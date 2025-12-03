@@ -12,7 +12,7 @@ class ContactModel {
   factory ContactModel.fromJson(Map<String, dynamic> json) {
     return ContactModel(
       id: json['id']?.toString(),
-      emailSender: json['emailSender'],
+      emailSender: json['email_sender'],
       emailReceiver: json['emailReceiver'],
     );
   }

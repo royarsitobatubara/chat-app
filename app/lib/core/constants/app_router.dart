@@ -27,14 +27,16 @@ class AppRouter {
       GoRoute(
         path: '/add-contact',
         pageBuilder: (BuildContext context, GoRouterState state) {
+          // ignore: always_specify_types
           return CustomTransitionPage(
             key: state.pageKey,
             child: const AddContactScreen(),
             transitionsBuilder:
-                (context, animation, secondaryAnimation, child) {
+                (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
                   const Offset begin = Offset(1.0, 0.0);
                   const Offset end = Offset.zero;
-                  final tween = Tween(
+                  // ignore: always_specify_types
+                  final Animatable<Offset> tween = Tween(
                     begin: begin,
                     end: end,
                   ).chain(CurveTween(curve: Curves.easeOut));
