@@ -22,11 +22,13 @@ class _HomeScreenState extends State<HomeScreen> {
   final int _msgCount = 10;
   bool _isSearch = false;
   final List<Map<String, dynamic>> _listItemDrawer = [
+    {'label': 'profile', 'icon': Icons.person, 'router': '/profile'},
     {
       'label': 'contacts',
       'icon': Icons.contact_emergency_outlined,
       'router': '/contacts',
     },
+    {'label': 'settings', 'icon': Icons.settings, 'router': '/settings'},
   ];
 
   @override
@@ -40,7 +42,10 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       key: _globalKey,
       backgroundColor: AppColor.primary,
-      drawer: DrawerCustom(listItemDrawer: _listItemDrawer),
+      drawer: DrawerCustom(
+        listItemDrawer: _listItemDrawer,
+        keyDrawer: _globalKey,
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.only(

@@ -7,7 +7,12 @@ import 'package:go_router/go_router.dart';
 
 class DrawerCustom extends StatelessWidget {
   final List<Map<String, dynamic>> listItemDrawer;
-  const DrawerCustom({super.key, required this.listItemDrawer});
+  final GlobalKey<ScaffoldState> keyDrawer;
+  const DrawerCustom({
+    super.key,
+    required this.listItemDrawer,
+    required this.keyDrawer,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +52,10 @@ class DrawerCustom extends StatelessWidget {
     String router,
   ) {
     return GestureDetector(
-      onTap: () => context.push(router),
+      onTap: () {
+        keyDrawer.currentState!.closeDrawer();
+        context.push(router);
+      },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
         margin: const EdgeInsets.only(bottom: 10),
