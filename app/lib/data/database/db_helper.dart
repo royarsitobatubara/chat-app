@@ -35,7 +35,7 @@ class DBHelper {
 
     await db.execute('''
       CREATE TABLE contacts(
-        id TEXT PRIMARY KEY,
+        id INTEGER PRIMARY KEY AUTO INCREMENT,
         email_sender TEXT,
         email_receiver TEXT
       )

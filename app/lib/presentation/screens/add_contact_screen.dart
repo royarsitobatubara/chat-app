@@ -171,11 +171,15 @@ class _AddContactScreenState extends State<AddContactScreen> {
                         const SizedBox(width: 10),
                         if (_inputCtrl.text.isNotEmpty)
                           Text(
-                            _isExists
+                            _isLoading
+                                ? 'searching_user'.tr()
+                                : _isExists
                                 ? 'user_is_found'.tr()
                                 : 'user_not_found'.tr(),
                             style: TextStyle(
-                              color: _isExists
+                              color: _isLoading
+                                  ? Colors.grey.shade400
+                                  : _isExists
                                   ? Colors.greenAccent
                                   : Colors.redAccent,
                             ),

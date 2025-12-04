@@ -5,7 +5,4 @@ class AppEndpoint {
   static const String signIn = "$_baseUrl/user/signin";
   static const String signUp = "$_baseUrl/user/signup";
   static const String searchUser = "$_baseUrl/user/search?user=";
-
-  // CONTACT ENDPOINT
-  static const String insert = "$_baseUrl/contact";
 }

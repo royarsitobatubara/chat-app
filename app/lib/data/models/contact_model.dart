@@ -1,5 +1,5 @@
 class ContactModel {
-  final String? id;
+  final int? id;
   final String emailSender;
   final String emailReceiver;
 
@@ -11,17 +11,16 @@ class ContactModel {
 
   factory ContactModel.fromJson(Map<String, dynamic> json) {
     return ContactModel(
-      id: json['id']?.toString(),
-      emailSender: json['email_sender'],
-      emailReceiver: json['emailReceiver'],
+      id: json['id'] as int?,
+      emailSender: json['email_sender'] as String,
+      emailReceiver: json['email_receiver'] as String,
     );
   }
 
-  Map<String, String> toJson() {
-    return <String, String>{
-      'id': id as String,
-      'emailSender': emailSender,
-      'emailReceiver': emailReceiver,
+  Map<String, dynamic> toJson() {
+    return <String, dynamic>{
+      'email_sender': emailSender,
+      'email_receiver': emailReceiver,
     };
   }
 }
