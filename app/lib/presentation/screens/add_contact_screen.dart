@@ -37,6 +37,9 @@ class _AddContactScreenState extends State<AddContactScreen> {
     _debounce = Timer(const Duration(milliseconds: 500), () async {
       final ApiResponse res = await searchUser(e);
 
+      if (!mounted) return;
+      setState(() {});
+
       if (res.success == false || res.data == null) {
         setState(() {
           _isExists = false;
@@ -81,6 +84,7 @@ class _AddContactScreenState extends State<AddContactScreen> {
   Future<void> _clearMsg() async {
     // ignore: always_specify_types
     await Future.delayed(const Duration(seconds: 2));
+    if (!mounted) return;
     setState(() {
       _msg = "";
     });
@@ -88,6 +92,7 @@ class _AddContactScreenState extends State<AddContactScreen> {
 
   @override
   void dispose() {
+    _debounce?.cancel();
     _inputCtrl.dispose();
     _nameCtrl.dispose();
     super.dispose();

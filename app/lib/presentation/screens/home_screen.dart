@@ -1,6 +1,9 @@
+// ignore_for_file: always_specify_types
+
 import 'package:app/core/constants/app_color.dart';
 import 'package:app/presentation/widgets/buttons/icon_custom_button.dart';
 import 'package:app/presentation/widgets/buttons/new_message_button.dart';
+import 'package:app/presentation/widgets/drawer_custom.dart';
 import 'package:app/presentation/widgets/textfields/search_field.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -15,8 +18,16 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _searchCtrl = TextEditingController();
+  final GlobalKey<ScaffoldState> _globalKey = GlobalKey<ScaffoldState>();
   final int _msgCount = 10;
   bool _isSearch = false;
+  final List<Map<String, dynamic>> _listItemDrawer = [
+    {
+      'label': 'contacts',
+      'icon': Icons.contact_emergency_outlined,
+      'router': '/contacts',
+    },
+  ];
 
   @override
   void dispose() {
@@ -27,7 +38,9 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _globalKey,
       backgroundColor: AppColor.primary,
+      drawer: DrawerCustom(listItemDrawer: _listItemDrawer),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.only(
@@ -42,7 +55,10 @@ class _HomeScreenState extends State<HomeScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <IconCustomButton>[
-                  IconCustomButton(icon: Icons.menu, handle: () {}),
+                  IconCustomButton(
+                    icon: Icons.menu,
+                    handle: () => _globalKey.currentState!.openDrawer(),
+                  ),
                   IconCustomButton(
                     icon: _isSearch ? Icons.close : Icons.search,
                     handle: () => setState(() => _isSearch = !_isSearch),
@@ -51,7 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
 
               const SizedBox(height: 30),
-              
+
               // SEARCH FIELD
               AnimatedSize(
                 duration: const Duration(milliseconds: 300),
