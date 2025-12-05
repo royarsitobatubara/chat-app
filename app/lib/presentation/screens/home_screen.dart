@@ -22,13 +22,13 @@ class _HomeScreenState extends State<HomeScreen> {
   final int _msgCount = 10;
   bool _isSearch = false;
   final List<Map<String, dynamic>> _listItemDrawer = [
-    {'label': 'profile', 'icon': Icons.person, 'router': '/profile'},
+    {'label': 'profile', 'icon': Icons.person, 'router': ''},
     {
       'label': 'contacts',
       'icon': Icons.contact_emergency_outlined,
       'router': '/contacts',
     },
-    {'label': 'settings', 'icon': Icons.settings, 'router': '/settings'},
+    {'label': 'settings', 'icon': Icons.settings, 'router': ''},
   ];
 
   @override

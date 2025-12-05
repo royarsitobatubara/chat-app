@@ -1,3 +1,4 @@
+import 'package:app/core/helper/logger.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -16,12 +17,15 @@ class DBHelper {
   Future<Database> _initDB() async {
     final String dbPath = await getDatabasesPath();
     final String path = join(dbPath, 'myapp.db');
+    Logger.info("Opening database");
+    return await openDatabase(path, version: 1, onCreate: _onCreate);
+  }
 
-    return await openDatabase(
-      path,
-      version: 1,
-      onCreate: _onCreate,
-    );
+  Future<void> deleteDatabaseFile() async {
+    final String dbPath = await getDatabasesPath();
+    final String path = join(dbPath, 'myapp.db');
+
+    await deleteDatabase(path);
   }
 
   Future<void> _onCreate(Database db, int version) async {
@@ -35,7 +39,8 @@ class DBHelper {
 
     await db.execute('''
       CREATE TABLE contacts(
-        id INTEGER PRIMARY KEY AUTO INCREMENT,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT,
         email_sender TEXT,
         email_receiver TEXT
       )

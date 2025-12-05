@@ -2,14 +2,18 @@ import 'dart:async';
 
 import 'package:app/core/constants/app_color.dart';
 import 'package:app/core/helper/api_response.dart';
+import 'package:app/data/database/contact_db_service.dart';
 import 'package:app/data/database/user_db_service.dart';
+import 'package:app/data/models/contact_model.dart';
 import 'package:app/data/models/user_model.dart';
+import 'package:app/data/preferences/user_preferences.dart';
 import 'package:app/data/services/user_service.dart';
 import 'package:app/presentation/widgets/alert/message_alert.dart';
 import 'package:app/presentation/widgets/app_bar_custom.dart';
 import 'package:app/presentation/widgets/buttons/submit_button.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class AddContactScreen extends StatefulWidget {
   const AddContactScreen({super.key});
@@ -38,7 +42,6 @@ class _AddContactScreenState extends State<AddContactScreen> {
       final ApiResponse res = await searchUser(e);
 
       if (!mounted) return;
-      setState(() {});
 
       if (res.success == false || res.data == null) {
         setState(() {
@@ -71,14 +74,30 @@ class _AddContactScreenState extends State<AddContactScreen> {
       return;
     }
     setState(() => _isLoadingAdd = true);
+    final String emailSender = await UserPreferences.getEmail();
     final bool user = await UserDbService.addUser(_userSelected!);
-    if (user == false) {
+    final bool contact = await ContactDbService.addContact(
+      ContactModel(
+        name: _nameCtrl.text,
+        emailSender: emailSender,
+        emailReceiver: _userSelected!.email,
+      ),
+    );
+    if (user == false || contact == false) {
       setState(() {
         _isError = true;
         _msg = "failed_saving_user";
+        _isLoading = false;
       });
       _clearMsg();
     }
+    setState(() {
+      _isError = false;
+      _msg = "saving_contact";
+    });
+    await Future<dynamic>.delayed(const Duration(milliseconds: 300));
+    if (!mounted) return;
+    context.pop();
   }
 
   Future<void> _clearMsg() async {
@@ -158,6 +177,7 @@ class _AddContactScreenState extends State<AddContactScreen> {
 
                   const SizedBox(height: 10),
 
+                  // LOADING
                   SizedBox(
                     height: 18,
                     child: Row(
@@ -253,6 +273,8 @@ class _AddContactScreenState extends State<AddContactScreen> {
                 ],
               ),
             ),
+
+            // LIST USER
             if (_userList.isNotEmpty)
               Positioned(
                 top: 140,

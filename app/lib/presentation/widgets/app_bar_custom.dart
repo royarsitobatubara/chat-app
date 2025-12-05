@@ -5,7 +5,8 @@ import 'package:go_router/go_router.dart';
 
 class AppBarCustom extends StatelessWidget implements PreferredSizeWidget {
   final String title;
-  const AppBarCustom({super.key, required this.title});
+  final List<Widget>? actions;
+  const AppBarCustom({super.key, required this.title, this.actions});
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
@@ -30,6 +31,7 @@ class AppBarCustom extends StatelessWidget implements PreferredSizeWidget {
           fontWeight: FontWeight.w600,
         ),
       ),
+      actions: actions,
     );
   }
 }

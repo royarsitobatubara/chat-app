@@ -1,6 +1,7 @@
 import 'package:app/presentation/screens/add_contact_screen.dart';
 import 'package:app/presentation/screens/contacts_screen.dart';
 import 'package:app/presentation/screens/home_screen.dart';
+import 'package:app/presentation/screens/profile_screen.dart';
 import 'package:app/presentation/screens/signin_screen.dart';
 import 'package:app/presentation/screens/signup_screen.dart';
 import 'package:flutter/material.dart';
@@ -28,53 +29,61 @@ class AppRouter {
       GoRoute(
         path: '/add-contact',
         pageBuilder: (BuildContext context, GoRouterState state) {
-          // ignore: always_specify_types
-          return CustomTransitionPage(
-            key: state.pageKey,
+          return buildRightToLeftPage(
+            state: state,
             child: const AddContactScreen(),
-            transitionsBuilder:
-                (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
-                  const Offset begin = Offset(1.0, 0.0);
-                  const Offset end = Offset.zero;
-                  // ignore: always_specify_types
-                  final Animatable<Offset> tween = Tween(
-                    begin: begin,
-                    end: end,
-                  ).chain(CurveTween(curve: Curves.easeOut));
-
-                  return SlideTransition(
-                    position: animation.drive(tween),
-                    child: child,
-                  );
-                },
           );
         },
       ),
       GoRoute(
         path: '/contacts',
         pageBuilder: (BuildContext context, GoRouterState state) {
-          // ignore: always_specify_types
-          return CustomTransitionPage(
-            key: state.pageKey,
+          return buildRightToLeftPage(
+            state: state,
             child: const ContactsScreen(),
-            transitionsBuilder:
-                (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
-                  const Offset begin = Offset(1.0, 0.0);
-                  const Offset end = Offset.zero;
-                  // ignore: always_specify_types
-                  final Animatable<Offset> tween = Tween(
-                    begin: begin,
-                    end: end,
-                  ).chain(CurveTween(curve: Curves.easeOut));
-
-                  return SlideTransition(
-                    position: animation.drive(tween),
-                    child: child,
-                  );
-                },
+          );
+        },
+      ),
+      GoRoute(
+        path: '/profile',
+        pageBuilder: (BuildContext context, GoRouterState state) {
+          final String emailReceiver = state.extra as String;
+          return buildRightToLeftPage(
+            state: state,
+            child: ProfileScreen(emailReceiver: emailReceiver),
           );
         },
       ),
     ],
+  );
+}
+
+CustomTransitionPage<dynamic> buildRightToLeftPage({
+  required GoRouterState state,
+  required Widget child,
+}) {
+  const Offset begin = Offset(1.0, 0.0);
+  const Offset end = Offset.zero;
+
+  final Animatable<Offset> tween = Tween<Offset>(
+    begin: begin,
+    end: end,
+  ).chain(CurveTween(curve: Curves.easeOut));
+
+  return CustomTransitionPage<dynamic>(
+    key: state.pageKey,
+    child: child,
+    transitionsBuilder:
+        (
+          BuildContext context,
+          Animation<double> animation,
+          Animation<double> secondaryAnimation,
+          Widget child,
+        ) {
+          return SlideTransition(
+            position: animation.drive(tween),
+            child: child,
+          );
+        },
   );
 }

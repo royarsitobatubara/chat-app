@@ -35,4 +35,24 @@ class UserDbService {
       return false;
     }
   }
+
+  static Future<UserModel?> getUserByEmailReceiver(String emailReceiver) async {
+    try {
+      final Database db = await DBHelper.instance.database;
+
+      final List<Map<String, dynamic>> result = await db.query(
+        _table,
+        where: 'email = ?',
+        whereArgs: <String>[emailReceiver],
+        limit: 1,
+      );
+
+      if (result.isNotEmpty) {
+        return UserModel.fromJson(result.first);
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }
 }
