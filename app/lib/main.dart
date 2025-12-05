@@ -1,8 +1,12 @@
+// ignore_for_file: always_specify_types
+
 import 'package:app/core/constants/app_color.dart';
 import 'package:app/core/constants/app_router.dart';
 import 'package:app/data/preferences/user_preferences.dart';
+import 'package:app/data/providers/contact_provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,7 +18,10 @@ void main() async {
       path: 'assets/langs',
       startLocale: startLocale,
       fallbackLocale: const Locale('en'),
-      child: const MainApp(),
+      child: MultiProvider(
+        providers: [ChangeNotifierProvider(create: (_) => ContactProvider())],
+        child: const MainApp(),
+      ),
     ),
   );
 }

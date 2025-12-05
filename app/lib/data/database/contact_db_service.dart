@@ -81,4 +81,47 @@ class ContactDbService {
       return null;
     }
   }
+
+  static Future<bool> updateContact(
+    String emailSender,
+    String emailReceiver,
+    ContactModel contact,
+  ) async {
+    try {
+      final Database db = await DBHelper.instance.database;
+
+      final int updated = await db.update(
+        _table,
+        contact.toJson(),
+        where: 'email_sender = ? AND email_receiver = ?',
+        whereArgs: <String>[emailSender, emailReceiver],
+      );
+
+      return updated > 0;
+    } catch (e) {
+      Logger.error('updateContact: $e');
+      return false;
+    }
+  }
+
+  static Future<bool> deleteContact(
+    String emailSender,
+    String emailReceiver,
+  ) async {
+    try {
+      final Database db = await DBHelper.instance.database;
+
+      final int deleted = await db.delete(
+        _table,
+        where: 'email_sender = ? AND email_receiver = ?',
+        whereArgs: <String>[emailSender, emailReceiver],
+      );
+
+      return deleted > 0;
+    } catch (e) {
+      Logger.error('deleteContact: $e');
+      return false;
+    }
+  }
+  
 }

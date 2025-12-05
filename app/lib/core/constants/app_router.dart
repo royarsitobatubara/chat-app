@@ -1,5 +1,7 @@
 import 'package:app/presentation/screens/add_contact_screen.dart';
+import 'package:app/presentation/screens/chat_screen.dart';
 import 'package:app/presentation/screens/contacts_screen.dart';
+import 'package:app/presentation/screens/edit_contact_screen.dart';
 import 'package:app/presentation/screens/home_screen.dart';
 import 'package:app/presentation/screens/profile_screen.dart';
 import 'package:app/presentation/screens/signin_screen.dart';
@@ -36,6 +38,19 @@ class AppRouter {
         },
       ),
       GoRoute(
+        path: '/edit-contact',
+        pageBuilder: (BuildContext context, GoRouterState state) {
+          final Map<String, dynamic> data = state.extra as Map<String, dynamic>;
+          return buildRightToLeftPage(
+            state: state,
+            child: EditContactScreen(
+              emailReceiver: data['emailReceiver'] as String,
+              emailSender: data['emailSender'] as String,
+            ),
+          );
+        },
+      ),
+      GoRoute(
         path: '/contacts',
         pageBuilder: (BuildContext context, GoRouterState state) {
           return buildRightToLeftPage(
@@ -51,6 +66,19 @@ class AppRouter {
           return buildRightToLeftPage(
             state: state,
             child: ProfileScreen(emailReceiver: emailReceiver),
+          );
+        },
+      ),
+      GoRoute(
+        path: '/chat',
+        pageBuilder: (BuildContext context, GoRouterState state) {
+          final Map<String, dynamic> data = state.extra as Map<String, dynamic>;
+          return buildRightToLeftPage(
+            state: state,
+            child: ChatScreen(
+              emailReceiver: data['emailReceiver'] as String,
+              emailSender: data['emailSender'] as String,
+            ),
           );
         },
       ),

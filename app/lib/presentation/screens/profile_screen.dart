@@ -2,12 +2,14 @@
 
 import 'package:app/core/constants/app_color.dart';
 import 'package:app/data/database/contact_db_service.dart';
-import 'package:app/data/database/user_db_service.dart';
 import 'package:app/data/models/contact_model.dart';
-import 'package:app/data/models/user_model.dart';
 import 'package:app/data/preferences/user_preferences.dart';
+import 'package:app/data/providers/contact_provider.dart';
 import 'package:app/presentation/widgets/app_bar_custom.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatefulWidget {
   final String emailReceiver;
@@ -18,39 +20,116 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  UserModel? user;
   ContactModel? contact;
-  final _actions = [
-    {'icon': Icons.chat, 'handle': () {}},
-    {'icon': Icons.edit, 'handle': () {}},
-    {'icon': Icons.delete, 'handle': () {}},
-  ];
 
   Future<void> getDataUser() async {
     final emailSender = await UserPreferences.getEmail();
-    final userDB = await UserDbService.getUserByEmailReceiver(
-      widget.emailReceiver,
-    );
     final contactDB = await ContactDbService.getContactByEmails(
       emailSender,
       widget.emailReceiver,
     );
     if (contactDB != null) {
       setState(() {
-        user = userDB;
         contact = contactDB;
       });
     }
+  }
+
+  void _loadData() async {
+    final emailSender = await UserPreferences.getEmail();
+    if (!mounted) return;
+    Provider.of<ContactProvider>(
+      context,
+      listen: false,
+    ).getContact(emailSender, widget.emailReceiver);
+  }
+
+  Future<void> handleDelete() async {
+    final bool? result = await showConfirmDelete();
+    if (result != true) return;
+
+    final emailSender = await UserPreferences.getEmail();
+    await ContactDbService.deleteContact(emailSender, widget.emailReceiver);
+
+    if (!mounted) return;
+    context.read<ContactProvider>().getAllContacts(emailSender);
+    context.pop();
+  }
+
+  Future<bool?> showConfirmDelete() {
+    return showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: AppColor.primary,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          title: Text(
+            'delete_profile'.tr(),
+            style: const TextStyle(
+              color: AppColor.lightBlue,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: Text(
+            'are_you_sure_to_delete_this_contact'.tr(),
+            style: const TextStyle(color: AppColor.lightBlue),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: Text(
+                'cancel'.tr(),
+                style: const TextStyle(color: AppColor.lightBlue),
+              ),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: Text(
+                'delete'.tr(),
+                style: const TextStyle(color: Colors.redAccent),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
   void initState() {
     super.initState();
     getDataUser();
+    _loadData();
   }
 
   @override
   Widget build(BuildContext context) {
+    final List<Map<String, dynamic>> actions = [
+      {
+        'icon': Icons.chat,
+        'handle': () => context.push(
+          '/chat',
+          extra: {
+            'emailSender': contact!.emailSender,
+            'emailReceiver': widget.emailReceiver,
+          },
+        ),
+      },
+      {
+        'icon': Icons.edit,
+        'handle': () => context.push(
+          '/edit-contact',
+          extra: {
+            'emailSender': contact!.emailSender,
+            'emailReceiver': widget.emailReceiver,
+          },
+        ),
+      },
+      {'icon': Icons.delete, 'handle': handleDelete},
+    ];
     return Scaffold(
       backgroundColor: AppColor.primary,
       appBar: const AppBarCustom(title: 'profile'),
@@ -65,42 +144,58 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(height: 30),
 
                   // USERNAME
-                  Text(
-                    contact!.name,
-                    style: const TextStyle(
-                      color: AppColor.lightBlue,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 22,
-                    ),
+                  Selector<ContactProvider, ContactModel>(
+                    selector: (_, selector) => selector.contact,
+                    builder: (_, data, _) {
+                      if (contact == null) {
+                        return const CircularProgressIndicator();
+                      }
+                      return Text(
+                        data.name,
+                        style: const TextStyle(
+                          color: AppColor.lightBlue,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 22,
+                        ),
+                      );
+                    },
                   ),
 
                   const SizedBox(height: 15),
 
                   // PHOTO PROFILE
-                  Container(
-                    width: 100,
-                    height: 100,
-                    alignment: Alignment.center,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: <Color>[
-                          AppColor.lightBlue,
-                          AppColor.lightBlue,
-                          AppColor.mediumBlue,
-                        ],
-                      ),
-                    ),
-                    child: Text(
-                      contact!.name[0].toUpperCase(),
-                      style: const TextStyle(
-                        color: AppColor.secondary,
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                  Selector<ContactProvider, ContactModel>(
+                    selector: (_, selector) => selector.contact,
+                    builder: (_, data, _) {
+                      if (contact == null)
+                        // ignore: curly_braces_in_flow_control_structures
+                        return const SizedBox(width: 100, height: 100);
+                      return Container(
+                        width: 100,
+                        height: 100,
+                        alignment: Alignment.center,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: <Color>[
+                              AppColor.lightBlue,
+                              AppColor.lightBlue,
+                              AppColor.mediumBlue,
+                            ],
+                          ),
+                        ),
+                        child: Text(
+                          data.name[0].toUpperCase(),
+                          style: const TextStyle(
+                            color: AppColor.secondary,
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      );
+                    },
                   ),
 
                   const SizedBox(height: 15),
@@ -119,11 +214,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: _actions.map((action) {
+                    children: actions.map((action) {
                       return Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 12),
                         child: InkWell(
-                          onTap: () => action['handle'],
+                          onTap: action['handle'] as void Function(),
                           borderRadius: BorderRadius.circular(50),
                           child: Container(
                             width: 55,
