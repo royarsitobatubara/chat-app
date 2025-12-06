@@ -14,7 +14,7 @@ function socketHandler(io) {
     io.on("connection", (socket) => {
         
         userSocket(io, socket, userOnline);
-        messageSocket(io, socket)
+        messageSocket(io, socket, userOnline)
 
         socket.on("disconnect", ()=> {
             for(const [email, id] of userOnline.entries()){

@@ -24,18 +24,12 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _messageCtrl = TextEditingController();
-  ContactModel? _contact;
   Future<void> getDataUser() async {
-    final emailSender = await UserPreferences.getEmail();
-    final contactDB = await ContactDbService.getContactByEmails(
+    final String emailSender = await UserPreferences.getEmail();
+    await ContactDbService.getContactByEmails(
       emailSender,
       widget.emailReceiver,
     );
-    if (contactDB != null) {
-      setState(() {
-        _contact = contactDB;
-      });
-    }
   }
 
   @override

@@ -45,5 +45,17 @@ class DBHelper {
         email_receiver TEXT
       )
     ''');
+
+    await db.execute('''
+      CREATE TABLE messages(
+        id TEXT PRIMARY KEY,
+        email_sender TEXT,
+        email_receiver TEXT,
+        message TEXT,
+        type TEXT,
+        status TEXT,
+        time TEXT
+      )
+    ''');
   }
 }

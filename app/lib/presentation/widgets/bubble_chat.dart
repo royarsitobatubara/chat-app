@@ -16,7 +16,7 @@ class BubbleChat extends StatelessWidget {
             ? MainAxisAlignment.end
             : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+        children: <Widget>[
           if (!isMe) const CircleAvatar(radius: 16, child: Text("A")),
           if (!isMe) const SizedBox(width: 8),
 
