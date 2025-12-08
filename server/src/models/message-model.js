@@ -9,7 +9,7 @@ import schema from "../lib/schema/message-schema.js";
  * @param {String} status 
  * @param {String} time 
  */
-const insert = async({ id, emailSender, emailReceiver, message, type, status, time })=> {
+const insert = async( id, emailSender, emailReceiver, message, type, status, time)=> {
     return await schema.create({ id, emailSender, emailReceiver, message, type, status, time });
 }
 

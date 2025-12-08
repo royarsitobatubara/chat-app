@@ -20,11 +20,14 @@ function socketHandler(io) {
             for(const [email, id] of userOnline.entries()){
                 if (id === socket.id){
                     userOnline.delete(email);
-                    logger.info(`${email} diconnected`);
+                    logger.info(`${email} disconnected`);
                     break;
                 }
             }
+
+            io.emit("user-online-list", Array.from(userOnline.keys()));
         });
+
     });
 }
 

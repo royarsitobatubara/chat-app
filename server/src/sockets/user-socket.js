@@ -1,6 +1,6 @@
 import { Server, Socket } from "socket.io";
 import logger from "../helpers/app-logger.js";
-const onlineUsers = new Map();
+import modelMsg from "../models/message-model.js";
 
 /**
  * CONTACT SOCKET
@@ -8,13 +8,54 @@ const onlineUsers = new Map();
  * @param {Socket} socket 
  * @param {Map} userOnline 
  */
-async function userSocket(io, socket, userOnline) {
-    socket.on('user-register', (email)=> {
-        if(!email)return;
-        userOnline.set(email, socket.id);
-        logger.info(`${email} is online`);
-        io.emit("user-online", Array.from(userOnline.keys));
-    });
+
+export default function userSocket(io, socket, userOnline) {
+
+  
+  // USER REGISTER ONLINE
+  socket.on("user-register", async(email) => {
+    if (!email) return;
+    userOnline.set(email, socket.id);
+    socket.join(email);
+    logger.info(`${email} is online, id: ${socket.id}`);
+    io.emit("user-online-list", Array.from(userOnline.keys()));
+    try {
+      // ambil message berdasarkan email dan send dari database
+      const sendMessage = await modelMsg.findSentMessages(email);
+      // kirim ke receiver
+      for(const msg of sendMessage){
+        io.to(socket.id).emit("receive-message", {
+          id: msg.id,
+          emailSender: msg.emailSender,
+          emailReceiver: msg.emailReceiver,
+          message: msg.message,
+          type: msg.type,
+          time: msg.time,
+          status: "delivered"
+        });
+      }
+      // kirim feedback ke pengirim
+      if (userOnline.has(msg.pengirim)) {
+        io.to(userOnline.get(msg.pengirim)).emit("update-message", {
+          id: msg.idchat,
+          status: "delivered"
+        });
+      }
+    } catch (error) {
+      logger.error(`deliver pending messages error: ${error}`);
+    }
+  });
+
+  // HANDLE DISCONNECT
+  socket.on("disconnect", () => {
+    for (const [email, id] of userOnline.entries()) {
+      if (id === socket.id) {
+        userOnline.delete(email);
+        logger.info(`${email} disconnected`);
+        io.emit("user-online-list", Array.from(userOnline.keys()));
+        break;
+      }
+    }
+  });
 }
 
-export default userSocket;
