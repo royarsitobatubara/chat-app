@@ -3,8 +3,14 @@ import 'package:flutter/material.dart';
 class BubbleChat extends StatelessWidget {
   final bool isMe;
   final String message;
+  final String name;
 
-  const BubbleChat({super.key, required this.isMe, required this.message});
+  const BubbleChat({
+    super.key,
+    required this.isMe,
+    required this.message,
+    required this.name,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +23,7 @@ class BubbleChat extends StatelessWidget {
             : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          if (!isMe) const CircleAvatar(radius: 16, child: Text("A")),
+          if (!isMe) CircleAvatar(radius: 16, child: Text(name[0])),
           if (!isMe) const SizedBox(width: 8),
 
           Flexible(

@@ -6,13 +6,19 @@ import 'package:app/presentation/screens/home_screen.dart';
 import 'package:app/presentation/screens/profile_screen.dart';
 import 'package:app/presentation/screens/signin_screen.dart';
 import 'package:app/presentation/screens/signup_screen.dart';
+import 'package:app/presentation/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(
-    initialLocation: '/home',
+    initialLocation: '/splash',
     routes: <GoRoute>[
+      GoRoute(
+        path: '/splash',
+        builder: (BuildContext context, GoRouterState state) =>
+            const SplashScreen(),
+      ),
       GoRoute(
         path: '/signin',
         builder: (BuildContext context, GoRouterState state) =>

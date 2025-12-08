@@ -1,5 +1,6 @@
 import 'package:app/core/constants/app_color.dart';
 import 'package:app/core/helper/api_response.dart';
+import 'package:app/data/preferences/user_preferences.dart';
 import 'package:app/data/services/auth_service.dart';
 import 'package:app/presentation/widgets/alert/message_alert.dart';
 import 'package:app/presentation/widgets/buttons/submit_button.dart';
@@ -40,9 +41,9 @@ class _SigninScreenState extends State<SigninScreen> {
           _isError = false;
           _msg = data.message;
         });
-
-        // ignore: always_specify_types
-        await Future.delayed(const Duration(seconds: 1));
+        await UserPreferences.setLogin(true);
+        await UserPreferences.setEmail(_emailCtrl.text);
+        await Future<dynamic>.delayed(const Duration(seconds: 1));
 
         if (!mounted) return;
         context.push('/home');

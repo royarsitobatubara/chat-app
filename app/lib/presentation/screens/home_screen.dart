@@ -3,6 +3,7 @@
 import 'package:app/core/constants/app_color.dart';
 import 'package:app/presentation/widgets/buttons/icon_custom_button.dart';
 import 'package:app/presentation/widgets/buttons/new_message_button.dart';
+import 'package:app/presentation/widgets/chat_item.dart';
 import 'package:app/presentation/widgets/drawer_custom.dart';
 import 'package:app/presentation/widgets/textfields/search_field.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -38,6 +39,11 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: _globalKey,
@@ -50,8 +56,8 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Padding(
           padding: const EdgeInsets.only(
             top: 20.0,
-            right: 20.0,
-            left: 20.0,
+            right: 15.0,
+            left: 15.0,
             bottom: 10.0,
           ),
           child: Column(
@@ -126,6 +132,20 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
 
               const SizedBox(height: 30),
+
+              // CHAT LIST
+              Expanded(
+                child: ListView.builder(
+                  itemCount: 5,
+                  itemBuilder: (BuildContext context, int index) {
+                    return const ChatItem(
+                      message: 'lorem ipsum dolor',
+                      name: 'guest',
+                      time: '00:00',
+                    );
+                  },
+                ),
+              ),
             ],
           ),
         ),

@@ -3,6 +3,7 @@
 import 'package:app/core/constants/app_color.dart';
 import 'package:app/core/constants/app_router.dart';
 import 'package:app/data/preferences/user_preferences.dart';
+import 'package:app/data/providers/chat_provider.dart';
 import 'package:app/data/providers/contact_provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +20,10 @@ void main() async {
       startLocale: startLocale,
       fallbackLocale: const Locale('en'),
       child: MultiProvider(
-        providers: [ChangeNotifierProvider(create: (_) => ContactProvider())],
+        providers: [
+          ChangeNotifierProvider(create: (_) => ContactProvider()),
+          ChangeNotifierProvider(create: (_) => ChatProvider()),
+        ],
         child: const MainApp(),
       ),
     ),

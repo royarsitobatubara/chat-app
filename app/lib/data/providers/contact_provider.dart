@@ -6,7 +6,7 @@ class ContactProvider extends ChangeNotifier {
   ContactModel? _contact;
   List<ContactModel> _contacts = <ContactModel>[];
 
-  ContactModel get contact => _contact!;
+  ContactModel? get contact => _contact;
   List<ContactModel> get contacts => _contacts;
 
   Future<void> getContact(String emailSender, String emailReceiver) async {

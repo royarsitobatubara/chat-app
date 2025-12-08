@@ -144,11 +144,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(height: 30),
 
                   // USERNAME
-                  Selector<ContactProvider, ContactModel>(
+                  Selector<ContactProvider, ContactModel?>(
                     selector: (_, selector) => selector.contact,
                     builder: (_, data, _) {
-                      if (contact == null) {
-                        return const CircularProgressIndicator();
+                      if (data == null) {
+                        return const Text(
+                          'Guest',
+                          style: TextStyle(
+                            color: AppColor.lightBlue,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 22,
+                          ),
+                        );
                       }
                       return Text(
                         data.name,
@@ -164,12 +171,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(height: 15),
 
                   // PHOTO PROFILE
-                  Selector<ContactProvider, ContactModel>(
+                  Selector<ContactProvider, ContactModel?>(
                     selector: (_, selector) => selector.contact,
                     builder: (_, data, _) {
-                      if (contact == null)
-                        // ignore: curly_braces_in_flow_control_structures
-                        return const SizedBox(width: 100, height: 100);
+                      if (data == null) {
+                        return Container(
+                          width: 100,
+                          height: 100,
+                          alignment: Alignment.center,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: <Color>[
+                                AppColor.lightBlue,
+                                AppColor.lightBlue,
+                                AppColor.mediumBlue,
+                              ],
+                            ),
+                          ),
+                          child: const Text(
+                            '?',
+                            style: TextStyle(
+                              color: AppColor.secondary,
+                              fontSize: 30,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        );
+                      }
                       return Container(
                         width: 100,
                         height: 100,

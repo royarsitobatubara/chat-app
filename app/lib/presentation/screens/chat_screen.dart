@@ -1,7 +1,9 @@
+// ignore_for_file: always_specify_types
+
 import 'package:app/core/constants/app_color.dart';
-import 'package:app/data/database/contact_db_service.dart';
 import 'package:app/data/models/contact_model.dart';
-import 'package:app/data/preferences/user_preferences.dart';
+import 'package:app/data/models/message_model.dart';
+import 'package:app/data/providers/chat_provider.dart';
 import 'package:app/data/providers/contact_provider.dart';
 import 'package:app/presentation/widgets/bubble_chat.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -24,17 +26,24 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _messageCtrl = TextEditingController();
-  Future<void> getDataUser() async {
-    final String emailSender = await UserPreferences.getEmail();
-    await ContactDbService.getContactByEmails(
-      emailSender,
-      widget.emailReceiver,
-    );
+  final ScrollController _scrollCtrl = ScrollController();
+
+  void adMessageHandle() async {
+    if (_messageCtrl.text.isEmpty) return;
+    _messageCtrl.clear();
+  }
+
+  @override
+  void initState() {
+    context.read<ChatProvider>().emailReceiver = widget.emailReceiver;
+    context.read<ChatProvider>().emailSender = widget.emailSender;
+    super.initState();
   }
 
   @override
   void dispose() {
     _messageCtrl.dispose();
+    _scrollCtrl.dispose();
     super.dispose();
   }
 
@@ -52,6 +61,8 @@ class _ChatScreenState extends State<ChatScreen> {
             color: AppColor.lightBlue,
           ),
         ),
+
+        // PHOTO PROFILE
         title: GestureDetector(
           onTap: () => context.push('/profile', extra: widget.emailReceiver),
           child: Row(
@@ -72,10 +83,19 @@ class _ChatScreenState extends State<ChatScreen> {
                     ],
                   ),
                 ),
-                child: Selector<ContactProvider, ContactModel>(
-                  // ignore: always_specify_types
+                child: Selector<ContactProvider, ContactModel?>(
                   selector: (_, prev) => prev.contact,
-                  builder: (_, ContactModel data, _) {
+                  builder: (_, ContactModel? data, _) {
+                    if (data == null) {
+                      return const Text(
+                        '?',
+                        style: TextStyle(
+                          color: AppColor.secondary,
+                          fontSize: 25,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      );
+                    }
                     return Text(
                       data.name[0].toUpperCase(),
                       style: const TextStyle(
@@ -90,13 +110,23 @@ class _ChatScreenState extends State<ChatScreen> {
 
               const SizedBox(width: 10),
 
+              // NAME AND STATUS ONLINE
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Selector<ContactProvider, ContactModel>(
-                    // ignore: always_specify_types
+                  Selector<ContactProvider, ContactModel?>(
                     selector: (_, prev) => prev.contact,
-                    builder: (_, ContactModel data, _) {
+                    builder: (_, ContactModel? data, _) {
+                      if (data == null) {
+                        return const Text(
+                          'Guest',
+                          style: TextStyle(
+                            color: AppColor.lightBlue,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                          ),
+                        );
+                      }
                       return Text(
                         data.name,
                         style: const TextStyle(
@@ -129,10 +159,24 @@ class _ChatScreenState extends State<ChatScreen> {
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: ListView.builder(
-                  itemCount: 10,
-                  itemBuilder: (BuildContext context, int index) {
-                    return BubbleChat(isMe: true, message: 'nigga $index');
+                child: Selector<ChatProvider, List<MessageModel>>(
+                  selector: (_, prov) => prov.messages,
+                  builder: (_, messages, _) {
+                    return ListView.builder(
+                      controller: _scrollCtrl,
+                      itemCount: messages.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        final msg = messages[index];
+                        final isMe = msg.emailSender == widget.emailSender;
+                        return BubbleChat(
+                          isMe: isMe,
+                          message: msg.message,
+                          name: widget.emailReceiver == msg.emailReceiver
+                              ? 'a'
+                              : 'You',
+                        );
+                      },
+                    );
                   },
                 ),
               ),
@@ -178,7 +222,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
                   // SEND BUTTON
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () => adMessageHandle(),
                     child: Container(
                       padding: const EdgeInsets.all(12),
                       decoration: const BoxDecoration(
