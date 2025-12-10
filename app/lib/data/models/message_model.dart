@@ -4,7 +4,7 @@ class MessageModel {
   final String emailReceiver;
   final String message;
   final String type;
-  final String? status;
+  final String status;
   final String time;
 
   MessageModel({
@@ -13,7 +13,7 @@ class MessageModel {
     required this.emailReceiver,
     required this.message,
     required this.type,
-    this.status,
+    required this.status,
     required this.time,
   });
 
@@ -36,7 +36,7 @@ class MessageModel {
       'emailReceiver': emailReceiver,
       'message': message,
       'type': type,
-      'status': status!,
+      'status': status,
       'time': time,
     };
   }

@@ -18,7 +18,7 @@ class _SplashScreenState extends State<SplashScreen> {
     // await DBHelper.instance.deleteDatabaseFile();
     // await UserPreferences.setLogin(false);
     final bool isLogin = await UserPreferences.getLogin();
-    final String email = await UserPreferences.getEmail();
+    // final String email = await UserPreferences.getEmail();
 
     await Future.delayed(const Duration(milliseconds: 300));
 

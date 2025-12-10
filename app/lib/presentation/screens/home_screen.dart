@@ -23,7 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final int _msgCount = 10;
   bool _isSearch = false;
   final List<Map<String, dynamic>> _listItemDrawer = [
-    {'label': 'profile', 'icon': Icons.person, 'router': ''},
+    {'label': 'profile', 'icon': Icons.person, 'router': '/yourprogile'},
     {
       'label': 'contacts',
       'icon': Icons.contact_emergency_outlined,

@@ -5,6 +5,7 @@ class ChatItem extends StatelessWidget {
   final String name;
   final String message;
   final String time;
+  final String? status;
   final VoidCallback? onTap;
 
   const ChatItem({
@@ -12,7 +13,8 @@ class ChatItem extends StatelessWidget {
     required this.name,
     required this.message,
     required this.time,
-    this.onTap
+    this.onTap,
+    this.status,
   });
 
   @override
@@ -69,10 +71,29 @@ class ChatItem extends StatelessWidget {
               time,
               style: const TextStyle(color: AppColor.lightBlue, fontSize: 12),
             ),
-            const Icon(Icons.check, size: 20, color: Colors.grey),
+            if (status != null) _buildStatusIcon(status!),
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildStatusIcon(String status) {
+    switch (status) {
+      case 'pending':
+        return const Icon(Icons.access_time, size: 20, color: Colors.grey);
+
+      case 'send':
+        return const Icon(Icons.done, size: 20, color: Colors.grey);
+
+      case 'delivered':
+        return const Icon(Icons.done_all, size: 20, color: Colors.grey);
+
+      case 'read':
+        return const Icon(Icons.done_all, size: 20, color: AppColor.lightBlue);
+
+      default:
+        return const Icon(Icons.help_outline, size: 20, color: Colors.grey);
+    }
   }
 }

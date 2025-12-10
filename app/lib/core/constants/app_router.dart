@@ -3,6 +3,7 @@ import 'package:app/presentation/screens/chat_screen.dart';
 import 'package:app/presentation/screens/contacts_screen.dart';
 import 'package:app/presentation/screens/edit_contact_screen.dart';
 import 'package:app/presentation/screens/home_screen.dart';
+import 'package:app/presentation/screens/not_found_screen.dart';
 import 'package:app/presentation/screens/profile_screen.dart';
 import 'package:app/presentation/screens/signin_screen.dart';
 import 'package:app/presentation/screens/signup_screen.dart';
@@ -89,6 +90,8 @@ class AppRouter {
         },
       ),
     ],
+    errorBuilder: (BuildContext context, GoRouterState state) =>
+        const NotFoundScreen(),
   );
 }
 
